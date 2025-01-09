@@ -1,18 +1,16 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional, List, Dict, Any
+from pydantic import BaseModel
+from typing import Dict, Any, Optional
 
 class AssistantCreate(BaseModel):
-    model_config = ConfigDict(protected_namespaces=())
-    
     name: str
     model_type: str
-    system_message: Optional[str] = None
-    config: Optional[Dict[str, Any]] = None
+    system_message: str
+    config: Dict[str, Any]
 
 class AssistantResponse(BaseModel):
     name: str
     model_type: str
-    system_message: Optional[str]
+    system_message: str
     has_rag: bool
 
 class ChatMessage(BaseModel):

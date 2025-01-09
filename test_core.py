@@ -21,7 +21,7 @@ async def test_assistants():
             model=openai_service,
             system_message="You are a helpful assistant."
         )
-        
+         
         # Normal yanıt testi
         print("\nTesting normal response:")
         response = await openai_assistant.process_message("merhaba nasılsın")
