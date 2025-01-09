@@ -2,13 +2,15 @@ from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .db_connection import Base
+import uuid
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(String, primary_key=True, index=True)
-    username = Column(String, unique=True, nullable=False)
-    email = Column(String, unique=True)
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    email = Column(String, unique=True, index=True)
+    username = Column(String, unique=True)
+    hashed_password = Column(String)
     created_at = Column(DateTime, default=datetime.utcnow)
     
     # Relationships
@@ -21,13 +23,13 @@ class Assistant(Base):
     __tablename__ = "assistants"
 
     id = Column(String, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, unique=True)
     model_type = Column(String)
     system_message = Column(String)
-    config = Column(JSON)
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
-    creator_id = Column(String, ForeignKey("users.id", ondelete="SET NULL"))
+    config = Column(JSON, default={})
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, onupdate=datetime.utcnow)
+    creator_id = Column(String, ForeignKey("users.id"))
     
     # Relationships
     creator = relationship("User", back_populates="assistants")

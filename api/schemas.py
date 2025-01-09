@@ -1,20 +1,25 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Dict, Any, Optional, List
 from datetime import datetime
 
 class UserBase(BaseModel):
+    email: EmailStr
     username: str
-    email: Optional[str] = None
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class UserResponse(UserBase):
     id: str
     created_at: datetime
+    hashed_password: Optional[str] = None
 
     class Config:
         from_attributes = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 class AssistantCreate(BaseModel):
     name: str
@@ -27,10 +32,10 @@ class AssistantResponse(BaseModel):
     name: str
     model_type: str
     system_message: str
-    config: Dict[str, Any]
-    created_at: Optional[datetime]
-    updated_at: Optional[datetime]
-    creator_id: Optional[str]
+    config: Optional[Dict] = {}
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    creator_id: Optional[str] = None
 
     class Config:
         from_attributes = True

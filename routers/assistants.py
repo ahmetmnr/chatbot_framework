@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import StreamingResponse
 from typing import List, AsyncGenerator, Optional, Dict
-from sqlalchemy import select, delete
+from sqlalchemy import select, delete, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database.models import Assistant as AssistantModel, Conversation, Message, User
 from core.database import get_db
@@ -14,6 +14,17 @@ import uuid
 from datetime import datetime
 import os
 import json
+from .auth import get_current_user  # Auth router'dan import ediyoruz
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, and_
+from core.database import get_db
+from core.database.models import Assistant, Conversation, Message, User
+from datetime import datetime
+import uuid
+from typing import Optional
+from sse_starlette.sse import EventSourceResponse
+import json
+import asyncio
 
 # Global assistants dictionary
 assistants: Dict[str, AssistantClass] = {}
@@ -24,95 +35,66 @@ router = APIRouter(
 )
 
 @router.get("/list", response_model=List[AssistantResponse])
-async def list_assistants(db: AsyncSession = Depends(get_db)):
+async def list_assistants(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)  # Kullanıcıyı al
+):
     try:
-        print("Fetching assistants from database...")
+        print(f"Fetching assistants for user: {current_user.id}")
         query = select(AssistantModel)
         result = await db.execute(query)
         db_assistants = result.scalars().all()
-        print(f"Found {len(db_assistants)} assistants")
         
-        response_list = []
-        for assistant in db_assistants:
-            try:
-                print(f"Processing assistant: {assistant.name}")
-                print(f"Assistant data: {assistant.__dict__}")
-                
-                config = assistant.config if isinstance(assistant.config, dict) else {}
-                response = AssistantResponse(
-                    id=assistant.id,
-                    name=assistant.name,
-                    model_type=assistant.model_type,
-                    system_message=assistant.system_message,
-                    config=config,
-                    created_at=assistant.created_at,
-                    updated_at=assistant.updated_at,
-                    creator_id=assistant.creator_id
-                )
-                response_list.append(response)
-            except Exception as e:
-                print(f"Error processing assistant {assistant.name}: {str(e)}")
-                continue
-        
-        return response_list
-        
+        return [AssistantResponse.from_orm(assistant) for assistant in db_assistants]
     except Exception as e:
         print(f"Error in list_assistants: {str(e)}")
-        print(f"Error type: {type(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/{assistant_name}/chat/stream")
 async def chat_stream(
     assistant_name: str,
     message: str,
-    conversation_name: Optional[str] = None,
+    conversation_id: Optional[str] = None,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     try:
-        # Önce test kullanıcısını kontrol et/oluştur
-        test_user_id = "test-user-id"
-        query = select(User).where(User.id == test_user_id)
-        result = await db.execute(query)
-        user = result.scalar_one_or_none()
-        
-        if not user:
-            # Test kullanıcısı yoksa oluştur
-            user = User(
-                id=test_user_id,
-                username="test_user",
-                email="test@example.com"
-            )
-            db.add(user)
-            await db.commit()
-        
         # Asistanı bul
-        query = select(AssistantModel).where(AssistantModel.name == assistant_name)
+        query = select(Assistant).where(Assistant.name == assistant_name)
         result = await db.execute(query)
         assistant = result.scalar_one_or_none()
         
         if not assistant:
             raise HTTPException(status_code=404, detail="Assistant not found")
-        
-        # Konuşma adını belirle
-        if not conversation_name:
-            # Eğer isim verilmediyse, varsayılan bir isim oluştur
-            conversation_name = f"Chat with {assistant_name} #{uuid.uuid4().hex[:6]}"
-        
-        # Yeni konuşma oluştur
-        conversation = Conversation(
-            id=str(uuid.uuid4()),
-            name=conversation_name,
-            assistant_id=assistant.id,
-            session_id=str(uuid.uuid4()),
-            user_id=test_user_id,
-            created_at=datetime.utcnow()
-        )
-        
-        db.add(conversation)
-        await db.commit()
-        
+
+        # Mevcut konuşmayı bul veya yeni oluştur
+        if conversation_id:
+            query = select(Conversation).where(
+                and_(
+                    Conversation.id == conversation_id,
+                    Conversation.user_id == current_user.id  # Kullanıcı kontrolü ekle
+                )
+            )
+            result = await db.execute(query)
+            conversation = result.scalar_one_or_none()
+            
+            if not conversation:
+                raise HTTPException(status_code=404, detail="Conversation not found")
+        else:
+            # Yeni konuşma oluştur
+            conversation_name = f"Chat with {assistant_name}"
+            conversation = Conversation(
+                id=str(uuid.uuid4()),
+                name=conversation_name,
+                assistant_id=assistant.id,
+                session_id=str(uuid.uuid4()),
+                user_id=current_user.id,  # Test user yerine gerçek kullanıcı
+                created_at=datetime.utcnow()
+            )
+            db.add(conversation)
+            await db.commit()
+            await db.refresh(conversation)
+
         # Kullanıcı mesajını kaydet
         user_message = Message(
             id=str(uuid.uuid4()),
@@ -202,12 +184,10 @@ async def chat_stream(
 async def create_assistant(
     assistant: AssistantCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)  # Auth sistemi eklenince
+    current_user: User = Depends(get_current_user)
 ):
     try:
-        print(f"Creating assistant: {assistant.name}")
-        
-        # Önce aynı isimde asistan var mı kontrol et
+        # İsim kontrolü yap
         query = select(AssistantModel).where(AssistantModel.name == assistant.name)
         result = await db.execute(query)
         existing_assistant = result.scalar_one_or_none()
@@ -218,51 +198,43 @@ async def create_assistant(
                 detail=f"Assistant with name '{assistant.name}' already exists"
             )
         
-        # Yeni asistanı oluştur
-        current_time = datetime.utcnow()
+        # Yeni asistan oluştur
         db_assistant = AssistantModel(
             id=str(uuid.uuid4()),
             name=assistant.name,
             model_type=assistant.model_type,
             system_message=assistant.system_message,
             config=assistant.config,
-            created_at=current_time,
-            updated_at=current_time,
-            creator_id=current_user.id  # Kullanıcı ID'sini ekle
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+            creator_id=current_user.id
         )
         
         db.add(db_assistant)
         await db.commit()
         await db.refresh(db_assistant)
         
-        print(f"Assistant created successfully: {db_assistant.name}")
-        
         return db_assistant
         
     except HTTPException as he:
         raise he
     except Exception as e:
-        print(f"Error in create_assistant: {str(e)}")
-        print(f"Error type: {type(e)}")
-        import traceback
-        print(f"Traceback: {traceback.format_exc()}")
+        print(f"Error creating assistant: {str(e)}")
         await db.rollback()
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/conversations", response_model=List[ConversationResponse])
 async def get_conversations(
     db: AsyncSession = Depends(get_db),
-    user_id: str = "test-user-id",
+    current_user: User = Depends(get_current_user),  # Kullanıcıyı al
     skip: int = 0,
     limit: int = 10
 ):
     try:
-        print(f"Fetching conversations for user: {user_id}")
-        
-        # Konuşmaları tarihe göre sırala (en yeniden en eskiye)
+        print(f"Fetching conversations for user: {current_user.id}")
         query = (
             select(Conversation)
-            .where(Conversation.user_id == user_id)
+            .where(Conversation.user_id == current_user.id)  # Kullanıcı ID'sini kullan
             .order_by(Conversation.created_at.desc())
             .offset(skip)
             .limit(limit)
@@ -273,49 +245,30 @@ async def get_conversations(
         
         response_list = []
         for conv in conversations:
-            # Her konuşmanın mesajlarını al
-            messages_query = (
-                select(Message)
-                .where(Message.conversation_id == conv.id)
-                .order_by(Message.created_at.asc())
-            )
+            messages_query = select(Message).where(Message.conversation_id == conv.id)
             messages_result = await db.execute(messages_query)
             messages = messages_result.scalars().all()
             
-            # Assistant bilgisini al
             assistant_query = select(AssistantModel).where(AssistantModel.id == conv.assistant_id)
             assistant_result = await db.execute(assistant_query)
             assistant = assistant_result.scalar_one_or_none()
             
-            # Eğer name alanı boşsa varsayılan bir isim oluştur
-            conversation_name = conv.name if conv.name else f"Chat with {assistant.name if assistant else 'Unknown'} #{conv.id[:6]}"
-            
             response_list.append(
                 ConversationResponse(
                     id=conv.id,
-                    name=conversation_name,  # Varsayılan isim kullan
+                    name=conv.name,
                     assistant_id=conv.assistant_id,
                     assistant_name=assistant.name if assistant else "Unknown",
                     session_id=conv.session_id,
                     user_id=conv.user_id,
                     created_at=conv.created_at,
-                    messages=[
-                        MessageResponse(
-                            id=msg.id,
-                            conversation_id=msg.conversation_id,
-                            role=msg.role,
-                            content=msg.content,
-                            created_at=msg.created_at
-                        ) for msg in messages
-                    ]
+                    messages=[MessageResponse.from_orm(msg) for msg in messages]
                 )
             )
         
         return response_list
-        
     except Exception as e:
         print(f"Error fetching conversations: {str(e)}")
-        await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/conversations/{conversation_id}/messages", response_model=List[MessageResponse])
