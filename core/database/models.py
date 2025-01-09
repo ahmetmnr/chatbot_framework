@@ -19,8 +19,11 @@ class Assistant(Base):
 class Conversation(Base):
     __tablename__ = "conversations"
 
-    id = Column(Integer, primary_key=True, index=True)
-    assistant_id = Column(Integer, ForeignKey("assistants.id"))
+    id = Column(String, primary_key=True, index=True)
+    assistant_id = Column(String, ForeignKey("assistants.id"))
+    session_id = Column(String)
+    user_id = Column(String)
+    created_at = Column(DateTime)
     
     assistant = relationship("Assistant", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation")
@@ -28,11 +31,11 @@ class Conversation(Base):
 class Message(Base):
     __tablename__ = "messages"
 
-    id = Column(Integer, primary_key=True, index=True)
-    conversation_id = Column(Integer, ForeignKey("conversations.id"))
+    id = Column(String, primary_key=True, index=True)
+    conversation_id = Column(String, ForeignKey("conversations.id"))
     role = Column(String)
     content = Column(Text)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime)
     
     conversation = relationship("Conversation", back_populates="messages")
     rag_results = relationship("RAGResult", back_populates="message")

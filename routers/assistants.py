@@ -54,10 +54,11 @@ async def list_assistants(db: AsyncSession = Depends(get_db)):
 async def chat_stream(
     name: str,
     message: str,
-    conversation_id: Optional[int] = None,
+    conversation_id: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     try:
+        # Asistanı bul
         query = select(AssistantModel).where(AssistantModel.name == name)
         result = await db.execute(query)
         db_assistant = result.scalar_one_or_none()
@@ -65,38 +66,53 @@ async def chat_stream(
         if not db_assistant:
             raise HTTPException(status_code=404, detail="Assistant not found")
 
+        # Eğer conversation_id yoksa yeni konuşma oluştur
         if not conversation_id:
             new_conversation = Conversation(
-                assistant_id=db_assistant.id
+                id=str(uuid.uuid4()),
+                assistant_id=db_assistant.id,
+                session_id=str(uuid.uuid4()),
+                user_id=str(uuid.uuid4()),
+                created_at=datetime.utcnow()
             )
             db.add(new_conversation)
             await db.commit()
             await db.refresh(new_conversation)
             conversation_id = new_conversation.id
 
+        # Kullanıcı mesajını kaydet
         user_message = Message(
+            id=str(uuid.uuid4()),
             conversation_id=conversation_id,
             role="user",
-            content=message
+            content=message,
+            created_at=datetime.utcnow()
         )
         db.add(user_message)
         await db.commit()
 
+        # Memory'de asistan var mı kontrol et ve oluştur
         if name not in assistants:
-            if db_assistant.model_type == "openai":
-                model = OpenAIService(api_key=os.getenv("OPENAI_API_KEY"))
-            elif db_assistant.model_type == "ollama":
-                model = OllamaService()
-            else:
-                raise HTTPException(status_code=400, detail="Invalid model type")
+            config = db_assistant.config if isinstance(db_assistant.config, dict) else {}
             
-            assistant = AssistantClass(
-                name=db_assistant.name,
-                model=model,
-                system_message=db_assistant.system_message,
-                config=json.loads(db_assistant.config) if db_assistant.config else {}
-            )
-            assistants[name] = assistant
+            try:
+                if db_assistant.model_type == "openai":
+                    model = OpenAIService()
+                elif db_assistant.model_type == "ollama":
+                    model = OllamaService()
+                else:
+                    raise HTTPException(status_code=400, detail="Invalid model type")
+                
+                assistant = AssistantClass(
+                    name=db_assistant.name,
+                    model=model,
+                    system_message=db_assistant.system_message,
+                    config=config
+                )
+                assistants[name] = assistant
+            except Exception as e:
+                print(f"Model initialization error: {str(e)}")
+                raise HTTPException(status_code=500, detail=f"Failed to initialize model: {str(e)}")
 
         async def generate() -> AsyncGenerator[str, None]:
             full_response = ""
@@ -106,17 +122,31 @@ async def chat_stream(
                         full_response += chunk
                         yield f"data: {chunk}\n\n"
                 
-                assistant_message = Message(
-                    conversation_id=conversation_id,
-                    role="assistant",
-                    content=full_response
-                )
-                db.add(assistant_message)
-                await db.commit()
+                if full_response:  # Sadece yanıt varsa kaydet
+                    assistant_message = Message(
+                        id=str(uuid.uuid4()),
+                        conversation_id=conversation_id,
+                        role="assistant",
+                        content=full_response,
+                        created_at=datetime.utcnow()
+                    )
+                    db.add(assistant_message)
+                    await db.commit()
                 
                 yield "data: [DONE]\n\n"
             except Exception as e:
-                print(f"Stream generation error: {str(e)}")
+                error_msg = f"Stream generation error: {str(e)}"
+                print(error_msg)
+                # Hata mesajını kaydet
+                error_message = Message(
+                    id=str(uuid.uuid4()),
+                    conversation_id=conversation_id,
+                    role="assistant",
+                    content=f"Error: {str(e)}",
+                    created_at=datetime.utcnow()
+                )
+                db.add(error_message)
+                await db.commit()
                 yield f"data: error: {str(e)}\n\n"
 
         return StreamingResponse(
@@ -133,7 +163,7 @@ async def chat_stream(
     except Exception as e:
         print(f"Chat stream error: {str(e)}")
         await db.rollback()
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/create", response_model=AssistantResponse)
 async def create_assistant(
