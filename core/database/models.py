@@ -3,6 +3,20 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from .db_connection import Base
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String, primary_key=True, index=True)
+    username = Column(String, unique=True, nullable=False)
+    email = Column(String, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    
+    # Relationships
+    assistants = relationship("Assistant", back_populates="creator")
+    conversations = relationship("Conversation", back_populates="user")
+    rag_documents = relationship("RAGDocument", back_populates="user")
+    rag_collections = relationship("RAGCollection", back_populates="user")
+
 class Assistant(Base):
     __tablename__ = "assistants"
 
@@ -13,7 +27,10 @@ class Assistant(Base):
     config = Column(JSON)
     created_at = Column(DateTime)
     updated_at = Column(DateTime)
+    creator_id = Column(String, ForeignKey("users.id", ondelete="SET NULL"))
     
+    # Relationships
+    creator = relationship("User", back_populates="assistants")
     conversations = relationship("Conversation", back_populates="assistant")
 
 class Conversation(Base):
@@ -22,10 +39,12 @@ class Conversation(Base):
     id = Column(String, primary_key=True, index=True)
     assistant_id = Column(String, ForeignKey("assistants.id"))
     session_id = Column(String)
-    user_id = Column(String)
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime)
     
+    # Relationships
     assistant = relationship("Assistant", back_populates="conversations")
+    user = relationship("User", back_populates="conversations")
     messages = relationship("Message", back_populates="conversation")
 
 class Message(Base):
@@ -37,17 +56,48 @@ class Message(Base):
     content = Column(Text)
     created_at = Column(DateTime)
     
+    # Relationship
     conversation = relationship("Conversation", back_populates="messages")
-    rag_results = relationship("RAGResult", back_populates="message")
 
-class RAGResult(Base):
-    __tablename__ = "rag_results"
+class RAGDocument(Base):
+    __tablename__ = "rag_documents"
 
-    id = Column(Integer, primary_key=True, index=True)
-    message_id = Column(Integer, ForeignKey("messages.id"))
-    rag_system_id = Column(Integer)
-    context = Column(Text)
-    meta_data = Column(Text)  # JSON string olarak saklıyoruz
+    id = Column(String, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    meta_data = Column(JSON)
+    user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-    
-    message = relationship("Message", back_populates="rag_results") 
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="rag_documents")
+    collections = relationship(
+        "RAGCollection",
+        secondary="rag_document_collections",
+        back_populates="documents"
+    )
+
+class RAGCollection(Base):
+    __tablename__ = "rag_collections"
+
+    id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    description = Column(Text)
+    user_id = Column(String, ForeignKey("users.id"))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow)
+
+    # Relationships
+    user = relationship("User", back_populates="rag_collections")
+    documents = relationship(
+        "RAGDocument",
+        secondary="rag_document_collections",
+        back_populates="collections"
+    )
+
+class RAGDocumentCollection(Base):
+    __tablename__ = "rag_document_collections"
+
+    document_id = Column(String, ForeignKey("rag_documents.id"), primary_key=True)
+    collection_id = Column(String, ForeignKey("rag_collections.id"), primary_key=True) 

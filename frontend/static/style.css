@@ -1,0 +1,42 @@
+/* ... mevcut stiller ... */
+
+/* Conversation list styles */
+.conversation-item {
+    padding: 0.5rem;
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.2s;
+}
+
+.conversation-item:hover {
+    background-color: #f8f9fa;
+}
+
+.conversation-item .btn-group {
+    display: none;
+}
+
+.conversation-item:hover .btn-group {
+    display: flex;
+}
+
+#conversations-list {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+#conversations-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#conversations-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+#conversations-list::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+#conversations-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+} 

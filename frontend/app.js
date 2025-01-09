@@ -2,7 +2,6 @@ class ChatApp {
     constructor() {
         this.apiUrl = 'http://localhost:8000';
         this.currentAssistant = null;
-        this.currentConversationId = null;
         
         // DOM elementlerini sakla
         this.messageInput = document.getElementById('message-input');
@@ -10,42 +9,56 @@ class ChatApp {
         this.assistantSelect = document.getElementById('assistant-select');
         this.sendButton = document.getElementById('send-button');
         this.currentAssistantHeader = document.getElementById('current-assistant');
+        this.createAssistantBtn = document.getElementById('create-assistant-btn');
         
         // Modal elementleri
         this.createAssistantModal = new bootstrap.Modal(document.getElementById('createAssistantModal'));
         this.createAssistantForm = document.getElementById('create-assistant-form');
-        this.createAssistantBtn = document.getElementById('create-assistant-btn');
 
-        // Event listeners
-        this.assistantSelect.addEventListener('change', (e) => {
-            this.currentAssistant = e.target.value;
-            if (this.currentAssistant) {
-                this.currentAssistantHeader.textContent = `Chat with ${this.currentAssistant}`;
-            }
-        });
+        // Event listeners'ları güvenli bir şekilde ekle
+        if (this.assistantSelect) {
+            this.assistantSelect.addEventListener('change', (e) => {
+                this.currentAssistant = e.target.value;
+                if (this.currentAssistant && this.currentAssistantHeader) {
+                    this.currentAssistantHeader.textContent = `Chat with ${this.currentAssistant}`;
+                }
+            });
+        }
         
-        this.sendButton.addEventListener('click', () => this.sendMessage());
-        this.messageInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') this.sendMessage();
-        });
+        if (this.sendButton) {
+            this.sendButton.addEventListener('click', () => this.sendMessage());
+        }
 
-        // Create assistant butonu için event listener
-        this.createAssistantBtn.addEventListener('click', () => this.createAssistant());
+        if (this.messageInput) {
+            this.messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') this.sendMessage();
+            });
+        }
+
+        if (this.createAssistantBtn) {
+            this.createAssistantBtn.addEventListener('click', () => this.createAssistant());
+        }
+
+        // Konuşma listesi için container - opsiyonel
+        this.conversationsContainer = document.getElementById('conversations-list');
+        const loadConversationsBtn = document.getElementById('load-conversations');
+        if (loadConversationsBtn) {
+            loadConversationsBtn.addEventListener('click', () => this.loadConversations());
+        }
 
         // Asistanları yükle
         this.loadAssistants();
-
-        // Toast container'ı oluştur
-        this.createToastContainer();
     }
 
     // Toast container'ı oluştur
     createToastContainer() {
-        const container = document.createElement('div');
-        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-        container.style.zIndex = '11';
-        document.body.appendChild(container);
-        this.toastContainer = container;
+        if (!document.querySelector('.toast-container')) {
+            const container = document.createElement('div');
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '11';
+            document.body.appendChild(container);
+            this.toastContainer = container;
+        }
     }
 
     addMessage(text, isUser = false) {
@@ -140,21 +153,18 @@ class ChatApp {
     async loadAssistants() {
         try {
             const response = await fetch(`${this.apiUrl}/assistants/list`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error('Failed to load assistants');
+            
             const assistants = await response.json();
-            
-            // Mevcut seçenekleri temizle
-            this.assistantSelect.innerHTML = '<option value="">Choose an assistant...</option>';
-            
-            // Yeni asistanları ekle
-            assistants.forEach(assistant => {
-                const option = document.createElement('option');
-                option.value = assistant.name;
-                option.textContent = assistant.name;
-                this.assistantSelect.appendChild(option);
-            });
+            if (this.assistantSelect) {
+                this.assistantSelect.innerHTML = '<option value="">Select an assistant...</option>';
+                assistants.forEach(assistant => {
+                    const option = document.createElement('option');
+                    option.value = assistant.name;
+                    option.textContent = assistant.name;
+                    this.assistantSelect.appendChild(option);
+                });
+            }
         } catch (error) {
             console.error('Error loading assistants:', error);
             this.showError('Failed to load assistants');
@@ -186,25 +196,27 @@ class ChatApp {
 
     // Hata mesajı göster
     showError(message) {
-        const toastElement = document.createElement('div');
-        toastElement.className = 'toast align-items-center text-white bg-danger border-0';
-        toastElement.setAttribute('role', 'alert');
-        toastElement.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">
-                    ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        `;
+        // Error container'ı kontrol et ve gerekirse oluştur
+        if (!this.errorContainer) {
+            this.createErrorContainer();
+        }
         
-        this.toastContainer.appendChild(toastElement);
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
-        
-        toastElement.addEventListener('hidden.bs.toast', () => {
-            toastElement.remove();
-        });
+        if (this.errorContainer) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'alert alert-danger alert-dismissible fade show';
+            errorDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            this.errorContainer.appendChild(errorDiv);
+            
+            // 5 saniye sonra otomatik kapat
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        } else {
+            console.error('Error container not found:', message);
+        }
     }
 
     async createAssistant() {
@@ -249,7 +261,128 @@ class ChatApp {
             this.showError(error.message || 'Failed to create assistant');
         }
     }
+
+    async loadConversations() {
+        try {
+            const response = await fetch(`${this.apiUrl}/assistants/conversations`);
+            if (!response.ok) throw new Error('Failed to load conversations');
+            
+            const conversations = await response.json();
+            if (this.conversationsContainer) {
+                this.conversationsContainer.innerHTML = '';
+                
+                conversations.forEach(conv => {
+                    const convDiv = document.createElement('div');
+                    convDiv.className = 'conversation-item p-2 border-bottom';
+                    
+                    // Son mesajı bul
+                    const lastMessage = conv.messages[conv.messages.length - 1];
+                    const lastMessagePreview = lastMessage ? 
+                        lastMessage.content.substring(0, 50) + (lastMessage.content.length > 50 ? '...' : '') : 
+                        'No messages';
+                    
+                    convDiv.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-1">Chat with ${conv.assistant_name}</h6>
+                            <small class="text-muted">${new Date(conv.created_at).toLocaleString()}</small>
+                        </div>
+                        <p class="mb-1 text-muted small">${lastMessagePreview}</p>
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-primary load-chat" data-conv-id="${conv.id}">
+                                Load Chat
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger delete-chat" data-conv-id="${conv.id}">
+                                Delete
+                            </button>
+                        </div>
+                    `;
+                    
+                    // Load Chat butonu için event listener
+                    const loadBtn = convDiv.querySelector('.load-chat');
+                    if (loadBtn) {
+                        loadBtn.addEventListener('click', () => this.loadConversation(conv));
+                    }
+                    
+                    // Delete butonu için event listener
+                    const deleteBtn = convDiv.querySelector('.delete-chat');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', () => this.deleteConversation(conv.id));
+                    }
+                    
+                    this.conversationsContainer.appendChild(convDiv);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading conversations:', error);
+            this.showError('Failed to load conversations');
+        }
+    }
+
+    // Konuşma yükleme metodu
+    async loadConversation(conversation) {
+        if (this.chatMessages) {
+            this.chatMessages.innerHTML = '';
+            conversation.messages.forEach(msg => {
+                this.appendMessage(msg.role, msg.content);
+            });
+            
+            // Asistan seçimini güncelle
+            if (this.assistantSelect) {
+                this.assistantSelect.value = conversation.assistant_name;
+                this.currentAssistant = conversation.assistant_name;
+            }
+            
+            if (this.currentAssistantHeader) {
+                this.currentAssistantHeader.textContent = `Chat with ${conversation.assistant_name}`;
+            }
+            
+            // Otomatik scroll
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }
+    }
+
+    // Konuşma silme metodu
+    async deleteConversation(conversationId) {
+        try {
+            const response = await fetch(`${this.apiUrl}/assistants/conversations/${conversationId}`, {
+                method: 'DELETE'
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete conversation');
+            
+            await this.loadConversations();
+            this.showSuccess('Conversation deleted successfully');
+        } catch (error) {
+            console.error('Error deleting conversation:', error);
+            this.showError('Failed to delete conversation');
+        }
+    }
+
+    // appendMessage metodunu ekle
+    appendMessage(role, content) {
+        if (this.chatMessages) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${role}`;
+            
+            // Markdown veya kod içeriği varsa işle
+            if (content.includes('```')) {
+                const formattedContent = content.replace(/```([\s\S]*?)```/g, (match, code) => {
+                    return `<pre><code>${code.trim()}</code></pre>`;
+                });
+                messageDiv.innerHTML = formattedContent;
+            } else {
+                messageDiv.textContent = content;
+            }
+            
+            this.chatMessages.appendChild(messageDiv);
+            
+            // Otomatik scroll
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+        }
+    }
 }
 
-// Global scope'a ekle
-window.ChatApp = ChatApp;
+// DOM yüklendikten sonra uygulama başlat
+document.addEventListener('DOMContentLoaded', () => {
+    new ChatApp();
+});
