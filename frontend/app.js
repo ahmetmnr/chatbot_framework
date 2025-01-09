@@ -283,7 +283,7 @@ class ChatApp {
                     
                     convDiv.innerHTML = `
                         <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-1">Chat with ${conv.assistant_name}</h6>
+                            <h6 class="mb-1">${conv.name}</h6>
                             <small class="text-muted">${new Date(conv.created_at).toLocaleString()}</small>
                         </div>
                         <p class="mb-1 text-muted small">${lastMessagePreview}</p>

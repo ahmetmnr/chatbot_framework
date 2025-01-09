@@ -67,6 +67,7 @@ async def list_assistants(db: AsyncSession = Depends(get_db)):
 async def chat_stream(
     assistant_name: str,
     message: str,
+    conversation_name: Optional[str] = None,
     db: AsyncSession = Depends(get_db)
 ):
     try:
@@ -94,12 +95,18 @@ async def chat_stream(
         if not assistant:
             raise HTTPException(status_code=404, detail="Assistant not found")
         
+        # Konuşma adını belirle
+        if not conversation_name:
+            # Eğer isim verilmediyse, varsayılan bir isim oluştur
+            conversation_name = f"Chat with {assistant_name} #{uuid.uuid4().hex[:6]}"
+        
         # Yeni konuşma oluştur
         conversation = Conversation(
             id=str(uuid.uuid4()),
+            name=conversation_name,
             assistant_id=assistant.id,
             session_id=str(uuid.uuid4()),
-            user_id=test_user_id,  # Test kullanıcısını kullan
+            user_id=test_user_id,
             created_at=datetime.utcnow()
         )
         
@@ -245,7 +252,7 @@ async def create_assistant(
 @router.get("/conversations", response_model=List[ConversationResponse])
 async def get_conversations(
     db: AsyncSession = Depends(get_db),
-    user_id: str = "test-user-id",  # Şimdilik test kullanıcısı
+    user_id: str = "test-user-id",
     skip: int = 0,
     limit: int = 10
 ):
@@ -280,9 +287,13 @@ async def get_conversations(
             assistant_result = await db.execute(assistant_query)
             assistant = assistant_result.scalar_one_or_none()
             
+            # Eğer name alanı boşsa varsayılan bir isim oluştur
+            conversation_name = conv.name if conv.name else f"Chat with {assistant.name if assistant else 'Unknown'} #{conv.id[:6]}"
+            
             response_list.append(
                 ConversationResponse(
                     id=conv.id,
+                    name=conversation_name,  # Varsayılan isim kullan
                     assistant_id=conv.assistant_id,
                     assistant_name=assistant.name if assistant else "Unknown",
                     session_id=conv.session_id,
@@ -304,6 +315,7 @@ async def get_conversations(
         
     except Exception as e:
         print(f"Error fetching conversations: {str(e)}")
+        await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/conversations/{conversation_id}/messages", response_model=List[MessageResponse])

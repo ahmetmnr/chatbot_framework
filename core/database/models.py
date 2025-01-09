@@ -37,6 +37,7 @@ class Conversation(Base):
     __tablename__ = "conversations"
 
     id = Column(String, primary_key=True, index=True)
+    name = Column(String, nullable=False)
     assistant_id = Column(String, ForeignKey("assistants.id"))
     session_id = Column(String)
     user_id = Column(String, ForeignKey("users.id"))

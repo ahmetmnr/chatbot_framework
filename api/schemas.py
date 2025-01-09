@@ -47,7 +47,9 @@ class MessageResponse(BaseModel):
 
 class ConversationResponse(BaseModel):
     id: str
+    name: str
     assistant_id: str
+    assistant_name: str
     session_id: str
     user_id: str
     created_at: datetime
