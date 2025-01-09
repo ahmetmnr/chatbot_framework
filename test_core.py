@@ -24,14 +24,14 @@ async def test_assistants():
         
         # Normal yanıt testi
         print("\nTesting normal response:")
-        response = await openai_assistant.process_message("What is 2+2?")
+        response = await openai_assistant.process_message("merhaba nasılsın")
         print(f"OpenAI Response: {response}")
         
         # Streaming yanıt testi
         print("\nTesting streaming response:")
         print("OpenAI Streaming Response: ", end="", flush=True)
         async for token in await openai_assistant.process_message(
-            "Explain why the sky is blue in 3 sentences.", 
+            "merhaba nasılsın", 
             stream=True
         ):
             print(token, end="", flush=True)
@@ -54,14 +54,14 @@ async def test_assistants():
         
         # Normal yanıt testi
         print("\nTesting normal response:")
-        response = await ollama_assistant.process_message("What is 2+2?")
+        response = await ollama_assistant.process_message("merhaba nasılsıns")
         print(f"Ollama Response: {response}")
         
         # Streaming yanıt testi
         print("\nTesting streaming response:")
         print("Ollama Streaming Response: ", end="", flush=True)
         async for token in await ollama_assistant.process_message(
-            "Explain why the sky is blue in 3 sentences.", 
+            "merhaba nasılsın", 
             stream=True
         ):
             print(token, end="", flush=True)

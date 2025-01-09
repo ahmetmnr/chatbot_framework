@@ -9,21 +9,17 @@ class BaseLanguageModel(ABC):
     @abstractmethod
     async def generate(self, 
                       prompt: str, 
-                      system_message: Optional[str] = None,
-                      stream: bool = False,
-                      **kwargs) -> Union[str, AsyncGenerator[str, None]]:
-        """Metin üretimi için temel metod
-        
-        Args:
-            prompt: Kullanıcı mesajı
-            system_message: Sistem talimatları
-            stream: True ise token token streaming yanıt döner
-            **kwargs: Ek model parametreleri
-            
-        Returns:
-            stream=True ise: AsyncGenerator[str, None] - Token token yanıtlar
-            stream=False ise: str - Tam yanıt
-        """
+                      messages: Optional[List[Dict[str, str]]] = None,
+                      **kwargs) -> str:
+        """Tek seferlik yanıt üretme"""
+        pass
+
+    @abstractmethod
+    async def stream_generate(self,
+                            prompt: str,
+                            messages: Optional[List[Dict[str, str]]] = None,
+                            **kwargs) -> AsyncGenerator[str, None]:
+        """Stream şeklinde yanıt üretme"""
         pass
 
     @abstractmethod

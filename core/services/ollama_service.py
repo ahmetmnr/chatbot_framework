@@ -18,37 +18,38 @@ class OllamaService(BaseLanguageModel):
     async def generate(self, 
                       prompt: str, 
                       system_message: Optional[str] = None,
-                      stream: bool = False,
-                      **kwargs) -> Union[str, AsyncGenerator[str, None]]:
+                      **kwargs) -> str:
         try:
             if system_message:
                 prompt = f"{system_message}\n\n{prompt}"
             
-            if stream:
-                return self._stream_response(prompt, **kwargs)
-            else:
-                response = await self.client.post(
-                    f"{self.base_url}/api/generate",
-                    json={
-                        "model": self.model,
-                        "prompt": prompt,
-                        "stream": False,
-                        **kwargs
-                    }
-                )
+            response = await self.client.post(
+                f"{self.base_url}/api/generate",
+                json={
+                    "model": self.model,
+                    "prompt": prompt,
+                    "stream": False,
+                    **kwargs
+                }
+            )
+            
+            if response.status_code != 200:
+                raise Exception(f"Ollama API error: {response.text}")
                 
-                if response.status_code != 200:
-                    raise Exception(f"Ollama API error: {response.text}")
-                    
-                return response.json()["response"]
+            return response.json()["response"]
 
         except Exception as e:
             print(f"Ollama Generate Error: {str(e)}")
             raise
 
-    async def _stream_response(self, prompt: str, **kwargs) -> AsyncGenerator[str, None]:
-        """Token token yanıt üretir"""
+    async def stream_generate(self,
+                            prompt: str,
+                            system_message: Optional[str] = None,
+                            **kwargs) -> AsyncGenerator[str, None]:
         try:
+            if system_message:
+                prompt = f"{system_message}\n\n{prompt}"
+                
             async with self.client.stream(
                 "POST",
                 f"{self.base_url}/api/generate",
@@ -78,8 +79,7 @@ class OllamaService(BaseLanguageModel):
                     json={
                         "model": self.model,
                         "prompt": text
-                    },
-                    timeout=self.timeout
+                    }
                 )
                 
                 if response.status_code != 200:

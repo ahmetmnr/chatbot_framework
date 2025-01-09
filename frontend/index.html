@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Framework</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Asistan Seçimi -->
+        <div class="assistant-selector">
+            <select id="assistantSelect">
+                <option value="">Asistan Seçin...</option>
+            </select>
+            <button id="createAssistant">Yeni Asistan</button>
+        </div>
+
+        <!-- Chat Alanı -->
+        <div class="chat-container">
+            <div id="chatMessages" class="messages"></div>
+            
+            <!-- Mesaj Gönderme -->
+            <div class="input-area">
+                <textarea id="messageInput" placeholder="Mesajınızı yazın..."></textarea>
+                <button id="sendMessage">Gönder</button>
+            </div>
+        </div>
+
+        <!-- Asistan Oluşturma Modal -->
+        <div id="createAssistantModal" class="modal">
+            <div class="modal-content">
+                <h2>Yeni Asistan Oluştur</h2>
+                <form id="assistantForm">
+                    <div class="form-group">
+                        <label for="assistantName">Asistan Adı:</label>
+                        <input type="text" id="assistantName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modelType">Model Tipi:</label>
+                        <select id="modelType" required>
+                            <option value="openai">OpenAI</option>
+                            <option value="ollama">Ollama</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="systemMessage">Sistem Mesajı:</label>
+                        <textarea id="systemMessage"></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit">Oluştur</button>
+                        <button type="button" class="cancel">İptal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/static/app.js"></script>
+</body>
+</html>

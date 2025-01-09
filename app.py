@@ -2,6 +2,9 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
 from routers import assistants_router, rag_router
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
 
 # Load environment variables
 load_dotenv()
@@ -17,10 +20,9 @@ app = FastAPI(
 app.include_router(assistants_router)
 app.include_router(rag_router)
 
+# Statik dosyaları doğru şekilde yapılandır
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
+
 @app.get("/")
-async def root():
-    return {
-        "message": "Welcome to Chatbot Framework API",
-        "docs_url": "/docs",
-        "redoc_url": "/redoc"
-    }
+async def serve_spa():
+    return FileResponse("frontend/index.html")
