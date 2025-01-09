@@ -9,7 +9,7 @@ class Assistant(Base):
     
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, unique=True, index=True)
-    model_type = Column(String)  # "openai" veya "ollama"
+    model_type = Column(String)
     system_message = Column(String, nullable=True)
     config = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -17,6 +17,12 @@ class Assistant(Base):
     
     conversations = relationship("Conversation", back_populates="assistant")
     rag_systems = relationship("RAGSystem", back_populates="assistant")
+
+    def __repr__(self):
+        return f"Assistant(name='{self.name}', model_type='{self.model_type}')"
+
+    def __str__(self):
+        return f"Assistant {self.name} ({self.model_type})"
 
 class Conversation(Base):
     __tablename__ = "conversations"

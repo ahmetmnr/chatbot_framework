@@ -2,7 +2,7 @@
 
 from .base_model import BaseLanguageModel
 import httpx
-from typing import List, Optional, AsyncGenerator, Union
+from typing import List, Optional, AsyncGenerator, Union, AsyncIterator
 import json
 
 class OllamaService(BaseLanguageModel):
@@ -97,3 +97,54 @@ class OllamaService(BaseLanguageModel):
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.client.aclose()
+
+    async def chat_stream(self, message: str, system_message: Optional[str] = None) -> AsyncIterator[str]:
+        try:
+            prompt = message
+            if system_message:
+                prompt = f"{system_message}\n\nUser: {message}\nAssistant:"
+
+            async with httpx.AsyncClient() as client:
+                async with client.stream(
+                    'POST',
+                    f"{self.base_url}/api/generate",
+                    json={
+                        "model": self.model,
+                        "prompt": prompt,
+                        "stream": True
+                    }
+                ) as response:
+                    async for line in response.aiter_lines():
+                        if not line:
+                            continue
+                        try:
+                            data = json.loads(line)
+                            if "response" in data:
+                                yield data["response"]
+                        except json.JSONDecodeError:
+                            continue
+
+        except Exception as e:
+            print(f"Ollama stream error: {str(e)}")
+            yield f"Error: {str(e)}"
+
+    async def chat(self, message: str, system_message: Optional[str] = None) -> str:
+        try:
+            prompt = message
+            if system_message:
+                prompt = f"{system_message}\n\nUser: {message}\nAssistant:"
+
+            async with httpx.AsyncClient() as client:
+                response = await client.post(
+                    f"{self.base_url}/api/generate",
+                    json={
+                        "model": self.model,
+                        "prompt": prompt
+                    }
+                )
+                data = response.json()
+                return data.get("response", "")
+
+        except Exception as e:
+            print(f"Ollama chat error: {str(e)}")
+            return f"Error: {str(e)}"

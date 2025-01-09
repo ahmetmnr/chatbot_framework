@@ -1,90 +1,47 @@
 # Path: chatbot_framework/core/services/openai_service.py
 
-from .base_model import BaseLanguageModel
+from typing import AsyncIterator, Optional
 from openai import AsyncOpenAI
-from typing import List, Optional, AsyncGenerator, Union, Dict
+import os
 
-class OpenAIService(BaseLanguageModel):
-    def __init__(self, api_key: str, model: str = "gpt-3.5-turbo", timeout: int = 30):
-        self.client = AsyncOpenAI(api_key=api_key, timeout=timeout)
-        self.model = model
+class OpenAIService:
+    def __init__(self, api_key: Optional[str] = None):
+        self.client = AsyncOpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
+        self.model = "gpt-3.5-turbo"
 
-    async def generate(
-        self, 
-        prompt: str, 
-        messages: List[Dict[str, str]] = None,
-        **kwargs
-    ) -> str:
+    async def chat_stream(self, message: str, system_message: Optional[str] = None) -> AsyncIterator[str]:
+        messages = []
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "user", "content": message})
+
         try:
-            if messages:
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    stream=False,
-                    **kwargs
-                )
-            else:
-                messages = []
-                if self.system_message:
-                    messages.append({"role": "system", "content": self.system_message})
-                messages.append({"role": "user", "content": prompt})
-                
-                response = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    stream=False,
-                    **kwargs
-                )
+            stream = await self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                stream=True
+            )
             
-            return response.choices[0].message.content
-        except Exception as e:
-            print(f"OpenAI Generate Error: {str(e)}")
-            raise
-
-    async def stream_generate(
-        self,
-        prompt: str,
-        messages: List[Dict[str, str]] = None,
-        **kwargs
-    ) -> AsyncGenerator[str, None]:
-        try:
-            if messages:
-                stream = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    stream=True,
-                    **kwargs
-                )
-            else:
-                messages = []
-                if self.system_message:
-                    messages.append({"role": "system", "content": self.system_message})
-                messages.append({"role": "user", "content": prompt})
-                
-                stream = await self.client.chat.completions.create(
-                    model=self.model,
-                    messages=messages,
-                    stream=True,
-                    **kwargs
-                )
-
             async for chunk in stream:
                 if chunk.choices[0].delta.content is not None:
                     yield chunk.choices[0].delta.content
-        except Exception as e:
-            print(f"OpenAI Stream Error: {str(e)}")
-            raise
 
-    async def get_embeddings(self, texts: List[str]) -> List[List[float]]:
-        try:
-            embeddings = []
-            for text in texts:
-                response = await self.client.embeddings.create(
-                    model="text-embedding-ada-002",
-                    input=text
-                )
-                embeddings.append(response.data[0].embedding)
-            return embeddings
         except Exception as e:
-            print(f"OpenAI Embeddings Error: {str(e)}")
-            raise
+            print(f"OpenAI stream error: {str(e)}")
+            yield f"Error: {str(e)}"
+
+    async def chat(self, message: str, system_message: Optional[str] = None) -> str:
+        messages = []
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "user", "content": message})
+
+        try:
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=messages
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            print(f"OpenAI chat error: {str(e)}")
+            return f"Error: {str(e)}"
