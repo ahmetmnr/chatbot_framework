@@ -3,10 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ç Chatbot</title>
+    <title>AI Chat</title>
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="/static/style.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-robot' viewBox='0 0 16 16'><path d='M6 12.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5M3 8.062C3 6.76 4.235 5.765 5.53 5.886a26.6 26.6 0 0 0 4.94 0C11.765 5.765 13 6.76 13 8.062v1.157a.93.93 0 0 1-.765.935c-.845.147-2.34.346-4.235.346s-3.39-.2-4.235-.346A.93.93 0 0 1 3 9.219zm4.542-.827a.25.25 0 0 0-.217.068l-.92.9a25 25 0 0 1-1.871-.183.25.25 0 0 0-.068.495c.55.076 1.232.149 2.02.193a.25.25 0 0 0 .189-.071l.754-.736.847 1.71a.25.25 0 0 0 .404.062l.932-.97a25 25 0 0 1 1.922-.188.25.25 0 0 0-.068-.495c-.538.074-1.207.145-1.98.189a.25.25 0 0 0-.166.076l-.754.785-.842-1.7a.25.25 0 0 0-.182-.135'/><path d='M8.5 1.866a1 1 0 1 0-1 0V3h-2A4.5 4.5 0 0 0 1 7.5V8a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1v1a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-1a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1v-.5A4.5 4.5 0 0 0 10.5 3h-2zM14 7.5V13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V7.5A3.5 3.5 0 0 1 5.5 4h5A3.5 3.5 0 0 1 14 7.5'/></svg>">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <!-- Auth Container -->
@@ -67,7 +75,11 @@
                             <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> Help</a></li>
                             <li><a class="dropdown-item" href="#"><i class="bi bi-book"></i> Documentation</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+                                    <div class="d-flex">
+            <button id="logout-button" class="btn btn-outline-danger">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </div>
                         </ul>
                     </div>
                 </div>
@@ -147,37 +159,107 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="createAssistantModalLabel">Create New Assistant</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <h5 class="modal-title">Create New Assistant</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <form id="create-assistant-form">
-                        <div class="modal-body">
+                    <div class="modal-body">
+                        <form id="create-assistant-form">
+                            <!-- Assistant Name -->
                             <div class="mb-3">
                                 <label for="assistant-name" class="form-label">Assistant Name</label>
                                 <input type="text" class="form-control" id="assistant-name" required>
                             </div>
+
+                            <!-- Model Type -->
                             <div class="mb-3">
-                                <label for="model-type" class="form-label">Model Type</label>
+                                <label for="model-type" class="form-label">Provider</label>
                                 <select class="form-select" id="model-type" required>
+                                    <option value="">Select provider...</option>
                                     <option value="openai">OpenAI</option>
-                                    <option value="anthropic">Anthropic</option>
+                                    <option value="ollama">Ollama</option>
                                 </select>
                             </div>
+
+                            <!-- Model Name -->
+                            <div class="mb-3">
+                                <label for="model-name" class="form-label">Model</label>
+                                <select class="form-select" id="model-name" required>
+                                    <option value="">Select a model...</option>
+                                </select>
+                            </div>
+
+                            <!-- System Message -->
                             <div class="mb-3">
                                 <label for="system-message" class="form-label">System Message</label>
-                                <textarea class="form-control" id="system-message" rows="3" required></textarea>
+                                <textarea class="form-control" id="system-message" rows="4" required></textarea>
+                                <div class="form-text">Define the assistant's behavior and role.</div>
                             </div>
-                            <div class="mb-3">
-                                <label for="temperature" class="form-label">Temperature</label>
-                                <input type="range" class="form-range" id="temperature" min="0" max="1" step="0.1" value="0.7">
-                                <div class="text-center" id="temperature-value">0.7</div>
+
+                            <!-- Model Parameters -->
+                            <div class="border rounded p-3 mb-3">
+                                <h6 class="mb-3">Model Parameters</h6>
+                                
+                                <!-- Temperature -->
+                                <div class="mb-3">
+                                    <label for="temperature" class="form-label d-flex justify-content-between">
+                                        <span>Temperature</span>
+                                        <span class="text-muted" id="temperature-value">0.7</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="temperature" 
+                                           min="0" max="1" step="0.1" value="0.7">
+                                    <div class="form-text">Controls randomness: Lower values make responses more focused, higher values make them more creative.</div>
+                                </div>
+
+                                <!-- Top P -->
+                                <div class="mb-3">
+                                    <label for="top-p" class="form-label d-flex justify-content-between">
+                                        <span>Top P (Nucleus Sampling)</span>
+                                        <span class="text-muted" id="top-p-value">0.9</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="top-p" 
+                                           min="0" max="1" step="0.1" value="0.9">
+                                    <div class="form-text">Limits cumulative probability of tokens considered. Lower values make output more focused.</div>
+                                </div>
+
+                                <!-- Max Tokens -->
+                                <div class="mb-3">
+                                    <label for="max-tokens" class="form-label d-flex justify-content-between">
+                                        <span>Max Tokens</span>
+                                        <span class="text-muted" id="max-tokens-value">2000</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="max-tokens" 
+                                           min="100" max="4000" step="100" value="2000">
+                                    <div class="form-text">Maximum length of the response.</div>
+                                </div>
+
+                                <!-- Frequency Penalty -->
+                                <div class="mb-3">
+                                    <label for="frequency-penalty" class="form-label d-flex justify-content-between">
+                                        <span>Frequency Penalty</span>
+                                        <span class="text-muted" id="frequency-penalty-value">0.0</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="frequency-penalty" 
+                                           min="-2" max="2" step="0.1" value="0">
+                                    <div class="form-text">Reduces repetition of tokens. Higher values decrease repetition.</div>
+                                </div>
+
+                                <!-- Presence Penalty -->
+                                <div class="mb-3">
+                                    <label for="presence-penalty" class="form-label d-flex justify-content-between">
+                                        <span>Presence Penalty</span>
+                                        <span class="text-muted" id="presence-penalty-value">0.0</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="presence-penalty" 
+                                           min="-2" max="2" step="0.1" value="0">
+                                    <div class="form-text">Encourages discussing new topics. Higher values increase topic diversity.</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary">Create Assistant</button>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" id="create-assistant-btn">Create Assistant</button>
+                    </div>
                 </div>
             </div>
         </div>

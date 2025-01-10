@@ -1,6 +1,6 @@
 # Path: chatbot_framework/core/services/openai_service.py
 
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator, Optional, List
 from openai import AsyncOpenAI
 import os
 
@@ -8,6 +8,18 @@ class OpenAIService:
     def __init__(self, api_key: Optional[str] = None):
         self.client = AsyncOpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
         self.model = "gpt-3.5-turbo"
+
+    async def list_models(self) -> List[str]:
+        """OpenAI modellerini listeler."""
+        try:
+            response = await self.client.models.list()
+            return sorted([
+                model.id for model in response.data 
+                if any(x in model.id.lower() for x in ["gpt-3.5", "gpt-4"])
+            ])
+        except Exception as e:
+            print(f"OpenAI API error: {str(e)}")
+            return []
 
     async def chat_stream(self, message: str, system_message: Optional[str] = None) -> AsyncIterator[str]:
         messages = []

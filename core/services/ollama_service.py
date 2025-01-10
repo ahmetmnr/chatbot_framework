@@ -148,3 +148,20 @@ class OllamaService(BaseLanguageModel):
         except Exception as e:
             print(f"Ollama chat error: {str(e)}")
             return f"Error: {str(e)}"
+
+    async def list_models(self) -> List[str]:
+        """Ollama modellerini listeler."""
+        try:
+            async with httpx.AsyncClient() as client:
+                response = await client.get(f'{self.base_url}/v1/models')
+                if response.status_code == 200:
+                    data = response.json()
+                    if isinstance(data, dict) and "data" in data:
+                        return sorted([
+                            model["id"].split(':')[0]
+                            for model in data["data"]
+                        ])
+        except Exception as e:
+            print(f"Ollama API error: {str(e)}")
+            return []
+        return []

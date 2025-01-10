@@ -28,6 +28,29 @@ class ChatApp {
         if (loadConversationsBtn) {
             loadConversationsBtn.addEventListener('click', () => this.loadConversations());
         }
+
+        // Logout butonu için event listener
+        const logoutBtn = document.getElementById('logout-button');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => this.handleLogout());
+        }
+
+        // Model parametreleri için event listener'lar
+        ['temperature', 'top-p', 'max-tokens', 'frequency-penalty', 'presence-penalty'].forEach(param => {
+            const slider = document.getElementById(param);
+            const value = document.getElementById(`${param}-value`);
+            if (slider && value) {
+                slider.addEventListener('input', (e) => {
+                    value.textContent = e.target.value;
+                });
+            }
+        });
+
+        // Model seçimi değiştiğinde
+        const modelType = document.getElementById('model-type');
+        if (modelType) {
+            modelType.addEventListener('change', () => this.loadModels(modelType.value));
+        }
     }
 
     initializeApp() {
@@ -351,7 +374,6 @@ class ChatApp {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    // Token geçersizse login sayfasına yönlendir
                     localStorage.removeItem('token');
                     this.showAuthContainer();
                     return;
@@ -360,26 +382,38 @@ class ChatApp {
             }
 
             const conversations = await response.json();
-
-            // Konuşmaları listele
             const conversationList = document.getElementById('conversations-list');
+            
             if (conversationList) {
                 conversationList.innerHTML = ''; // Listeyi temizle
 
                 conversations.forEach(conv => {
                     const item = document.createElement('div');
-                    item.classList.add('conversation-item', 'p-2', 'border-bottom');
+                    item.classList.add('conversation-item', 'p-2', 'border-bottom', 'hover-bg-light');
                     
-                    // Konuşma detaylarını göster
+                    // Tarih formatını düzenle
+                    const date = new Date(conv.created_at);
+                    const formattedDate = date.toLocaleString('tr-TR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+
                     item.innerHTML = `
                         <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>${conv.assistant_name}</strong>
-                                <small class="text-muted">${new Date(conv.created_at).toLocaleString()}</small>
+                            <div class="conversation-info">
+                                <div class="fw-bold text-truncate" style="max-width: 150px;">
+                                    ${conv.assistant_name}
+                                </div>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> ${formattedDate}
+                                </small>
                             </div>
-                            <button class="btn btn-sm btn-outline-primary load-chat" 
+                            <button class="btn btn-sm btn-primary load-chat" 
                                     data-conversation-id="${conv.id}">
-                                Load Chat
+                                <i class="bi bi-chat-dots"></i> Load
                             </button>
                         </div>
                     `;
@@ -430,6 +464,76 @@ class ChatApp {
         } catch (error) {
             console.error('Failed to load chat:', error);
             this.showError('Failed to load chat: ' + error.message);
+        }
+    }
+
+    async handleLogout() {
+        try {
+            const response = await fetch(`${this.apiUrl}/auth/logout`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+
+            // Token'ı temizle
+            localStorage.removeItem('token');
+            this.token = null;
+
+            // Login sayfasına yönlendir
+            this.showAuthContainer();
+            
+            // Chat verilerini temizle
+            if (this.chatMessages) {
+                this.chatMessages.innerHTML = '';
+            }
+            if (this.assistantSelect) {
+                this.assistantSelect.innerHTML = '<option value="">Choose an assistant...</option>';
+            }
+            this.currentAssistant = null;
+            this.currentConversationId = null;
+
+        } catch (error) {
+            console.error('Logout error:', error);
+            this.showError('Logout failed: ' + error.message);
+        }
+    }
+
+    async loadModels(provider) {
+        try {
+            const response = await fetch(`${this.apiUrl}/assistants/models`, {
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const models = await response.json();
+            const modelSelect = document.getElementById('model-name');
+            
+            if (modelSelect) {
+                modelSelect.innerHTML = '<option value="">Select a model...</option>';
+                
+                // Seçilen sağlayıcıya göre modelleri listele
+                if (models[provider]) {
+                    models[provider].forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = model;
+                        modelSelect.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load models:', error);
+            this.showError('Failed to load models: ' + error.message);
         }
     }
 }

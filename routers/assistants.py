@@ -25,6 +25,12 @@ from typing import Optional
 from sse_starlette.sse import EventSourceResponse
 import json
 import asyncio
+import openai
+from dotenv import load_dotenv
+from openai import OpenAI
+import httpx
+
+load_dotenv()
 
 # Global assistants dictionary
 assistants: Dict[str, AssistantClass] = {}
@@ -318,4 +324,27 @@ async def delete_conversation(
     except Exception as e:
         print(f"Error deleting conversation: {str(e)}")
         await db.rollback()
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/models", response_model=Dict[str, List[str]])
+async def list_models(current_user: User = Depends(get_current_user)):
+    try:
+        # Servisleri başlat
+        openai_service = OpenAIService()
+        ollama_service = OllamaService()
+
+        # Modelleri al
+        openai_models = await openai_service.list_models()
+        ollama_models = await ollama_service.list_models()
+
+        return {
+            "openai": openai_models,
+            "ollama": ollama_models
+        }
+        
+    except Exception as e:
+        print(f"Error in list_models: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch models: {str(e)}"
+        ) 

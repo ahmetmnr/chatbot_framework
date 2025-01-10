@@ -105,6 +105,10 @@ async def login(
         print(f"Traceback: {traceback.format_exc()}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.post("/logout")
+async def logout():
+    return {"message": "Successfully logged out"}
+
 # Dependency for protected routes
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
