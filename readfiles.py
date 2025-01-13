@@ -3,7 +3,7 @@ import os
 # === SETTINGS (Customize as needed) / AYARLAR (İsteğinize göre düzenleyin) ===
 
 # Directory to scan / Tarayacağınız dizin
-DIRECTORY_TO_SCAN = r"directoryroscan"
+DIRECTORY_TO_SCAN = r"C:\Users\Tuga-Munir\source\repos\chatbot_framework"
 
 # Folders to exclude / Hariç tutmak istediğiniz klasörler
 IGNORED_DIRS = ["venv", ".git", "__pycache__"]
@@ -16,6 +16,33 @@ FILE_EXTENSIONS = ["py", "html", "css", "js"]
 
 # Full file path for saving the output / Çıktının kaydedileceği tam dosya yolu
 OUTPUT_FILE = os.path.join(DIRECTORY_TO_SCAN, "merged_content_with_headers.txt")
+
+
+def get_directory_tree(directory: str, prefix: str = "", ignored_dirs: list[str] = None) -> str:
+    """
+    Creates a tree structure of directories and files
+    Dizin ve dosyaların ağaç yapısını oluşturur
+    """
+    if ignored_dirs is None:
+        ignored_dirs = []
+        
+    tree = ""
+    entries = os.listdir(directory)
+    entries = [e for e in entries if e not in ignored_dirs]
+    entries.sort()
+    
+    for i, entry in enumerate(entries):
+        path = os.path.join(directory, entry)
+        is_last = i == len(entries) - 1
+        
+        if os.path.isdir(path):
+            tree += f"{prefix}{'└──' if is_last else '├──'} {entry}/\n"
+            extension = "    " if is_last else "│   "
+            tree += get_directory_tree(path, prefix + extension, ignored_dirs)
+        else:
+            tree += f"{prefix}{'└──' if is_last else '├──'} {entry}\n"
+            
+    return tree
 
 
 def read_files_with_directory_headers(
@@ -39,7 +66,13 @@ def read_files_with_directory_headers(
     if ignored_files is None:
         ignored_files = []
 
-    all_content = f"Directory: {directory}\n\n"  # Directory header / Dizin başlığı
+    # First add directory tree / Önce dizin ağacını ekle
+    all_content = "Directory Tree / Dizin Ağacı:\n"
+    all_content += "========================\n"
+    all_content += get_directory_tree(directory, ignored_dirs=ignored_dirs)
+    all_content += "\n\nFile Contents / Dosya İçerikleri:\n"
+    all_content += "========================\n\n"
+    all_content += f"Directory: {directory}\n\n"
 
     for root, dirs, files in os.walk(directory):
         # Remove folders to be excluded / Hariç tutulması istenen klasörleri çıkar

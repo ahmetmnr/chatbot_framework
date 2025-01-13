@@ -51,6 +51,12 @@ class ChatApp {
         if (modelType) {
             modelType.addEventListener('change', () => this.loadModels(modelType.value));
         }
+
+        // Create Assistant butonu için event listener
+        const createAssistantBtn = document.getElementById('create-assistant-btn');
+        if (createAssistantBtn) {
+            createAssistantBtn.addEventListener('click', () => this.createAssistant());
+        }
     }
 
     initializeApp() {
@@ -82,17 +88,11 @@ class ChatApp {
         try {
             const response = await fetch(`${this.apiUrl}/assistants/list`, {
                 headers: {
-                    'Authorization': `Bearer ${this.token}`  // Token eklendi
+                    'Authorization': `Bearer ${this.token}`
                 }
             });
             
             if (!response.ok) {
-                if (response.status === 401) {
-                    // Token geçersizse login sayfasına yönlendir
-                    localStorage.removeItem('token');
-                    this.showAuthContainer();
-                    return;
-                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
@@ -110,7 +110,7 @@ class ChatApp {
             }
         } catch (error) {
             console.error('Error loading assistants:', error);
-            this.showError('Failed to load assistants');
+            this.showError('Failed to load assistants: ' + error.message);
         }
     }
 
@@ -211,28 +211,35 @@ class ChatApp {
     }
 
     showError(message) {
-        const toastContainer = document.createElement('div');
-        toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
-        toastContainer.style.zIndex = '11';
-        
-        toastContainer.innerHTML = `
-            <div class="toast align-items-center text-white bg-danger border-0" role="alert">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        ${message}
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-                </div>
-            </div>
+        const alertContainer = document.getElementById('alert-container') || document.body;
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
+        alertContainer.appendChild(alertDiv);
         
-        document.body.appendChild(toastContainer);
-        const toast = new bootstrap.Toast(toastContainer.querySelector('.toast'));
-        toast.show();
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    showSuccess(message) {
+        const alertContainer = document.getElementById('alert-container') || document.body;
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3';
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        `;
+        alertContainer.appendChild(alertDiv);
         
-        toastContainer.addEventListener('hidden.bs.toast', () => {
-            toastContainer.remove();
-        });
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
     }
 
     // Auth metodları
@@ -373,11 +380,6 @@ class ChatApp {
             });
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    this.showAuthContainer();
-                    return;
-                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
@@ -480,23 +482,18 @@ class ChatApp {
                 throw new Error('Logout failed');
             }
 
-            // Token'ı temizle
+            // Token'ı sil ve login sayfasına yönlendir
             localStorage.removeItem('token');
             this.token = null;
-
-            // Login sayfasına yönlendir
-            this.showAuthContainer();
             
-            // Chat verilerini temizle
-            if (this.chatMessages) {
-                this.chatMessages.innerHTML = '';
-            }
-            if (this.assistantSelect) {
-                this.assistantSelect.innerHTML = '<option value="">Choose an assistant...</option>';
-            }
-            this.currentAssistant = null;
-            this.currentConversationId = null;
-
+            // UI'ı güncelle
+            this.authContainer.style.display = 'block';
+            this.mainContainer.style.display = 'none';
+            
+            // Login formunu sıfırla
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            
         } catch (error) {
             console.error('Logout error:', error);
             this.showError('Logout failed: ' + error.message);
@@ -534,6 +531,65 @@ class ChatApp {
         } catch (error) {
             console.error('Failed to load models:', error);
             this.showError('Failed to load models: ' + error.message);
+        }
+    }
+
+    async createAssistant() {
+        try {
+            const name = document.getElementById('assistant-name').value;
+            const modelType = document.getElementById('model-type').value;
+            const modelName = document.getElementById('model-name').value;
+            const systemMessage = document.getElementById('system-message').value;
+            
+            // Form validasyonu
+            if (!name || !modelType || !modelName || !systemMessage) {
+                this.showError('Please fill in all required fields');
+                return;
+            }
+
+            // Model parametrelerini al
+            const config = {
+                temperature: parseFloat(document.getElementById('temperature').value),
+                top_p: parseFloat(document.getElementById('top-p').value),
+                max_tokens: parseInt(document.getElementById('max-tokens').value),
+                frequency_penalty: parseFloat(document.getElementById('frequency-penalty').value),
+                presence_penalty: parseFloat(document.getElementById('presence-penalty').value)
+            };
+
+            const response = await fetch(`${this.apiUrl}/assistants/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: JSON.stringify({
+                    name: name,
+                    model_type: modelType,
+                    model_name: modelName,
+                    system_message: systemMessage,
+                    config: config
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            
+            // Modal'ı kapat
+            const modal = bootstrap.Modal.getInstance(document.getElementById('createAssistantModal'));
+            modal.hide();
+
+            // Asistan listesini yenile
+            await this.loadAssistants();
+            
+            // Başarı mesajı göster
+            this.showSuccess('Assistant created successfully!');
+
+        } catch (error) {
+            console.error('Failed to create assistant:', error);
+            this.showError('Failed to create assistant: ' + error.message);
         }
     }
 }
