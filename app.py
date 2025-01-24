@@ -15,6 +15,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Conversation-Id"]  # Conversation ID header'ını expose et
 )
 
 # Frontend dosyalarını serve et

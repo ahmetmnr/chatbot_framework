@@ -2,7 +2,8 @@ class ChatApp {
     constructor() {
         this.apiUrl = 'http://localhost:8000';
         this.token = localStorage.getItem('token');
-        
+        this.currentConversationId = null;  // Mevcut sohbet oturumunun ID'sini tutar
+
         // DOM elementleri
         this.authContainer = document.getElementById('auth-container');
         this.mainContainer = document.getElementById('main-container');
@@ -11,7 +12,7 @@ class ChatApp {
         this.assistantSelect = document.getElementById('assistant-select');
         this.sendButton = document.getElementById('send-button');
         this.currentAssistantHeader = document.getElementById('current-assistant');
-        
+
         // Token kontrolü
         if (!this.token) {
             this.showAuthContainer();
@@ -57,13 +58,19 @@ class ChatApp {
         if (createAssistantBtn) {
             createAssistantBtn.addEventListener('click', () => this.createAssistant());
         }
+
+        // Yeni Sohbet butonu
+        const newChatButton = document.getElementById('new-chat-button');
+        if (newChatButton) {
+            newChatButton.addEventListener('click', () => this.startNewConversation());
+        }
     }
 
     initializeApp() {
         // Asistanları yükle
         this.loadAssistants();
-        
-        // Event listeners'ları ekle
+
+        // Event listeners
         if (this.assistantSelect) {
             this.assistantSelect.addEventListener('change', (e) => {
                 this.currentAssistant = e.target.value;
@@ -72,7 +79,7 @@ class ChatApp {
                 }
             });
         }
-        
+
         if (this.sendButton) {
             this.sendButton.addEventListener('click', () => this.sendMessage());
         }
@@ -91,13 +98,13 @@ class ChatApp {
                     'Authorization': `Bearer ${this.token}`
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const assistants = await response.json();
-            
+
             // Asistan listesini güncelle
             if (this.assistantSelect) {
                 this.assistantSelect.innerHTML = '<option value="">Choose an assistant...</option>';
@@ -133,35 +140,38 @@ class ChatApp {
         try {
             let url = `${this.apiUrl}/assistants/${encodeURIComponent(this.currentAssistant)}/chat/stream?message=${encodeURIComponent(message)}`;
             
-            // Eğer mevcut bir konuşma varsa, ID'sini ekle
             if (this.currentConversationId) {
                 url += `&conversation_id=${this.currentConversationId}`;
             }
 
             const response = await fetch(url, {
-                method: 'GET',
                 headers: {
-                    'Accept': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    'Authorization': `Bearer ${this.token}`  // Token eklendi
+                    'Authorization': `Bearer ${this.token}`,
+                    'Accept': 'text/event-stream'
                 }
             });
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    // Token geçersizse login sayfasına yönlendir
-                    localStorage.removeItem('token');
-                    this.showAuthContainer();
-                    return;
-                }
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
+            // Conversation ID'yi header'dan al
+            if (!this.currentConversationId) {
+                const conversationId = response.headers.get('x-conversation-id');
+                console.log('Response headers:', [...response.headers.entries()]);
+                console.log('Received conversation ID:', conversationId);
+                
+                if (conversationId) {
+                    this.currentConversationId = conversationId;
+                    console.log('Set conversation ID to:', this.currentConversationId);
+                }
+            }
+
             // Asistan yanıtı için yeni bir mesaj oluştur
-            let assistantMessage = document.createElement('div');
+            const assistantMessage = document.createElement('div');
             assistantMessage.className = 'message assistant';
             this.chatMessages.appendChild(assistantMessage);
-            
+
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
@@ -193,20 +203,13 @@ class ChatApp {
                 console.error('Stream error:', streamError);
                 throw streamError;
             } finally {
+                // Reader'ı sonlandır
                 reader.cancel();
             }
 
-            // İlk mesaj gönderildiğinde conversation_id'yi al
-            if (!this.currentConversationId) {
-                const headerConversationId = response.headers.get('X-Conversation-Id');
-                if (headerConversationId) {
-                    this.currentConversationId = headerConversationId;
-                }
-            }
-
         } catch (error) {
-            console.error('Mesaj gönderme hatası:', error);
-            this.showError('Mesaj gönderilemedi: ' + error.message);
+            console.error('Error sending message:', error);
+            this.showError('Error: ' + error.message);
         }
     }
 
@@ -220,7 +223,7 @@ class ChatApp {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         alertContainer.appendChild(alertDiv);
-        
+
         setTimeout(() => {
             alertDiv.remove();
         }, 5000);
@@ -236,22 +239,21 @@ class ChatApp {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         alertContainer.appendChild(alertDiv);
-        
+
         setTimeout(() => {
             alertDiv.remove();
         }, 5000);
     }
 
-    // Auth metodları
+    // ===================== AUTH METHODS =====================
     async handleLogin(event) {
         event.preventDefault();
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-        
+
         try {
-            // OAuth2PasswordRequestForm formatında gönder
             const formData = new URLSearchParams();
-            formData.append('username', email);    // username = email
+            formData.append('username', email);
             formData.append('password', password);
 
             const response = await fetch(`${this.apiUrl}/auth/token`, {
@@ -317,12 +319,12 @@ class ChatApp {
     toggleAuthForms(show = 'login') {
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
-        
+
         if (!loginForm || !registerForm) {
             console.error('Auth forms not found in DOM');
             return;
         }
-        
+
         if (show === 'login') {
             loginForm.style.display = 'block';
             registerForm.style.display = 'none';
@@ -335,7 +337,7 @@ class ChatApp {
     showAuthContainer() {
         if (this.authContainer) {
             this.authContainer.style.display = 'block';
-            this.toggleAuthForms('login'); // Varsayılan olarak login formunu göster
+            this.toggleAuthForms('login');
         }
         if (this.mainContainer) {
             this.mainContainer.style.display = 'none';
@@ -370,6 +372,7 @@ class ChatApp {
             showLoginBtn.addEventListener('click', () => this.toggleAuthForms('login'));
         }
     }
+    // ========================================================
 
     async loadConversations() {
         try {
@@ -385,14 +388,14 @@ class ChatApp {
 
             const conversations = await response.json();
             const conversationList = document.getElementById('conversations-list');
-            
+
             if (conversationList) {
                 conversationList.innerHTML = ''; // Listeyi temizle
 
                 conversations.forEach(conv => {
                     const item = document.createElement('div');
                     item.classList.add('conversation-item', 'p-2', 'border-bottom', 'hover-bg-light');
-                    
+
                     // Tarih formatını düzenle
                     const date = new Date(conv.created_at);
                     const formattedDate = date.toLocaleString('tr-TR', {
@@ -419,13 +422,13 @@ class ChatApp {
                             </button>
                         </div>
                     `;
-                    
-                    // Load Chat butonuna tıklama olayı ekle
+
+                    // Load Chat butonuna tıklama
                     const loadChatBtn = item.querySelector('.load-chat');
                     if (loadChatBtn) {
                         loadChatBtn.addEventListener('click', () => this.loadChat(conv.id));
                     }
-                    
+
                     conversationList.appendChild(item);
                 });
             }
@@ -448,21 +451,24 @@ class ChatApp {
             }
 
             const messages = await response.json();
-            
-            // Mesajları chat alanına yükle
+
+            // Chat alanını temizle
             if (this.chatMessages) {
-                this.chatMessages.innerHTML = ''; // Chat alanını temizle
-                
-                messages.forEach(msg => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `message ${msg.role === 'user' ? 'user' : 'assistant'}`;
-                    messageDiv.textContent = msg.content;
-                    this.chatMessages.appendChild(messageDiv);
-                });
-                
-                // Chat alanını en alta kaydır
-                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                this.chatMessages.innerHTML = '';
+                // conversation_id'yi sakla
+                this.currentConversationId = conversationId;
             }
+
+            // Mesajları ekrana bas
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.role === 'user' ? 'user' : 'assistant'}`;
+                messageDiv.textContent = msg.content;
+                this.chatMessages.appendChild(messageDiv);
+            });
+
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+
         } catch (error) {
             console.error('Failed to load chat:', error);
             this.showError('Failed to load chat: ' + error.message);
@@ -485,15 +491,15 @@ class ChatApp {
             // Token'ı sil ve login sayfasına yönlendir
             localStorage.removeItem('token');
             this.token = null;
-            
-            // UI'ı güncelle
+
+            // UI güncelle
             this.authContainer.style.display = 'block';
             this.mainContainer.style.display = 'none';
-            
+
             // Login formunu sıfırla
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
-            
+
         } catch (error) {
             console.error('Logout error:', error);
             this.showError('Logout failed: ' + error.message);
@@ -514,11 +520,11 @@ class ChatApp {
 
             const models = await response.json();
             const modelSelect = document.getElementById('model-name');
-            
+
             if (modelSelect) {
                 modelSelect.innerHTML = '<option value="">Select a model...</option>';
-                
-                // Seçilen sağlayıcıya göre modelleri listele
+
+                // Seçilen sağlayıcıya göre modeller
                 if (models[provider]) {
                     models[provider].forEach(model => {
                         const option = document.createElement('option');
@@ -540,14 +546,12 @@ class ChatApp {
             const modelType = document.getElementById('model-type').value;
             const modelName = document.getElementById('model-name').value;
             const systemMessage = document.getElementById('system-message').value;
-            
-            // Form validasyonu
+
             if (!name || !modelType || !modelName || !systemMessage) {
                 this.showError('Please fill in all required fields');
                 return;
             }
 
-            // Model parametrelerini al
             const config = {
                 temperature: parseFloat(document.getElementById('temperature').value),
                 top_p: parseFloat(document.getElementById('top-p').value),
@@ -576,20 +580,44 @@ class ChatApp {
             }
 
             const result = await response.json();
-            
-            // Modal'ı kapat
+
+            // Modal'ı kapat (Bootstrap 5)
             const modal = bootstrap.Modal.getInstance(document.getElementById('createAssistantModal'));
-            modal.hide();
+            if (modal) modal.hide();
 
             // Asistan listesini yenile
             await this.loadAssistants();
-            
-            // Başarı mesajı göster
+
+            // Başarı mesajı
             this.showSuccess('Assistant created successfully!');
 
         } catch (error) {
             console.error('Failed to create assistant:', error);
             this.showError('Failed to create assistant: ' + error.message);
+        }
+    }
+
+    // ===================== Yeni sohbet başlatma =====================
+    startNewConversation() {
+        this.currentConversationId = null;
+        this.clearChatMessages();
+
+        // Başlık güncelle
+        if (this.currentAssistant && this.currentAssistantHeader) {
+            this.currentAssistantHeader.textContent = `New Chat with ${this.currentAssistant}`;
+        }
+
+        // Mesaj input alanını temizle
+        if (this.messageInput) {
+            this.messageInput.value = '';
+        }
+
+        console.log('Started new conversation');
+    }
+
+    clearChatMessages() {
+        if (this.chatMessages) {
+            this.chatMessages.innerHTML = '';
         }
     }
 }

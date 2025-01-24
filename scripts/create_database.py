@@ -2,6 +2,12 @@ import asyncio
 import asyncpg
 from dotenv import load_dotenv
 import os
+import sys
+from pathlib import Path
+
+# Proje kök dizinini Python path'ine ekle
+project_root = str(Path(__file__).parent.parent)
+sys.path.append(project_root)
 
 async def create_database():
     load_dotenv()
@@ -20,20 +26,14 @@ async def create_database():
             password=DB_PASSWORD,
             host=DB_HOST,
             port=DB_PORT,
-            database="postgres"
+            database='postgres'
         )
         
-        # Veritabanının var olup olmadığını kontrol et
-        exists = await conn.fetchval(
-            "SELECT 1 FROM pg_database WHERE datname = $1",
-            DB_NAME
-        )
-        
-        if not exists:
-            # Database'i oluştur
+        # Database'i oluştur
+        try:
             await conn.execute(f'CREATE DATABASE "{DB_NAME}"')
             print(f"Database '{DB_NAME}' created successfully!")
-        else:
+        except asyncpg.exceptions.DuplicateDatabaseError:
             print(f"Database '{DB_NAME}' already exists!")
             
         await conn.close()
