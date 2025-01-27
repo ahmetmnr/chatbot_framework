@@ -4,16 +4,15 @@ from .base_model import BaseLanguageModel
 import httpx
 from typing import List, Optional, AsyncGenerator, Union, AsyncIterator
 import json
+import os
+import aiohttp
 
 class OllamaService(BaseLanguageModel):
-    def __init__(self, 
-                 base_url: str = "http://localhost:11434", 
-                 model: str = "llama3.2",
-                 timeout: int = 30):
-        self.base_url = base_url
+    def __init__(self, model: str = "llama2"):
+        self.base_url = "http://localhost:11434"
         self.model = model
-        self.timeout = timeout
-        self.client = httpx.AsyncClient(timeout=timeout)
+        self.timeout = 30
+        self.client = httpx.AsyncClient(timeout=self.timeout)
 
     async def generate(self, 
                       prompt: str, 
@@ -98,35 +97,35 @@ class OllamaService(BaseLanguageModel):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.client.aclose()
 
-    async def chat_stream(self, message: str, system_message: Optional[str] = None) -> AsyncIterator[str]:
-        try:
-            prompt = message
-            if system_message:
-                prompt = f"{system_message}\n\nUser: {message}\nAssistant:"
+    async def chat_stream(self, prompt: str, system_message: str = None) -> AsyncGenerator[str, None]:
+        messages = []
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "user", "content": prompt})
 
-            async with httpx.AsyncClient() as client:
-                async with client.stream(
-                    'POST',
-                    f"{self.base_url}/api/generate",
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(
+                    f"{self.base_url}/api/chat",
                     json={
                         "model": self.model,
-                        "prompt": prompt,
+                        "messages": messages,
                         "stream": True
                     }
                 ) as response:
-                    async for line in response.aiter_lines():
-                        if not line:
-                            continue
-                        try:
-                            data = json.loads(line)
-                            if "response" in data:
-                                yield data["response"]
-                        except json.JSONDecodeError:
-                            continue
+                    if response.status != 200:
+                        error = await response.text()
+                        raise Exception(f"Ollama API error: {error}")
 
-        except Exception as e:
-            print(f"Ollama stream error: {str(e)}")
-            yield f"Error: {str(e)}"
+                    async for line in response.content:
+                        if line:
+                            chunk = json.loads(line)
+                            if "message" in chunk and "content" in chunk["message"]:
+                                yield chunk["message"]["content"]
+                                
+            except Exception as e:
+                print(f"Ollama stream error: {str(e)}")
+                yield f"Error: {str(e)}"
 
     async def chat(self, message: str, system_message: Optional[str] = None) -> str:
         try:

@@ -5,9 +5,9 @@ from openai import AsyncOpenAI
 import os
 
 class OpenAIService:
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"):
         self.client = AsyncOpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        self.model = "gpt-3.5-turbo"
+        self.model = model
 
     async def list_models(self) -> List[str]:
         """OpenAI modellerini listeler."""

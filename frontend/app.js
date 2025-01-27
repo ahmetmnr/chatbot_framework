@@ -131,19 +131,25 @@ class ChatApp {
 
     async sendMessage() {
         const message = this.messageInput.value.trim();
-        if (!message || !this.currentAssistant) return;
-
-        // Kullanıcı mesajını ekle
-        this.addMessage(message, true);
-        this.messageInput.value = '';
+        if (!message || !this.currentAssistant) {
+            this.showError('Lütfen bir asistan seçin ve mesaj girin');
+            return;
+        }
 
         try {
-            let url = `${this.apiUrl}/assistants/${encodeURIComponent(this.currentAssistant)}/chat/stream?message=${encodeURIComponent(message)}`;
+            // Mesajı göster
+            this.addMessage(message, true);
+            this.messageInput.value = '';
+
+            // URL oluştur
+            const url = new URL(`${this.apiUrl}/assistants/${encodeURIComponent(this.currentAssistant)}/chat/stream`);
+            url.searchParams.append('message', message);
             
             if (this.currentConversationId) {
-                url += `&conversation_id=${this.currentConversationId}`;
+                url.searchParams.append('conversation_id', this.currentConversationId);
             }
 
+            // Fetch isteği
             const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${this.token}`,
@@ -152,19 +158,15 @@ class ChatApp {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
             }
 
             // Conversation ID'yi header'dan al
-            if (!this.currentConversationId) {
-                const conversationId = response.headers.get('x-conversation-id');
-                console.log('Response headers:', [...response.headers.entries()]);
-                console.log('Received conversation ID:', conversationId);
-                
-                if (conversationId) {
-                    this.currentConversationId = conversationId;
-                    console.log('Set conversation ID to:', this.currentConversationId);
-                }
+            const newConversationId = response.headers.get('X-Conversation-Id');
+            if (newConversationId && !this.currentConversationId) {
+                this.currentConversationId = newConversationId;
+                console.log('Yeni konuşma ID:', this.currentConversationId);
             }
 
             // Asistan yanıtı için yeni bir mesaj oluştur
@@ -208,8 +210,9 @@ class ChatApp {
             }
 
         } catch (error) {
-            console.error('Error sending message:', error);
-            this.showError('Error: ' + error.message);
+            console.error('Mesaj gönderme hatası:', error);
+            this.showError(`Hata: ${error.message}`);
+            this.addMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.', false);
         }
     }
 

@@ -23,9 +23,10 @@ class Token(BaseModel):
 
 class AssistantCreate(BaseModel):
     name: str
-    model_type: str
+    model_type: str  # "openai" veya "ollama"
+    model_name: str  # "gpt-4", "llama2" gibi
     system_message: str
-    config: Dict[str, Any]
+    config: dict = {}
 
 class AssistantResponse(BaseModel):
     id: str

@@ -25,6 +25,7 @@ class Assistant(Base):
     id = Column(String, primary_key=True, index=True)
     name = Column(String, unique=True)
     model_type = Column(String)
+    model_name = Column(String)
     system_message = Column(String)
     config = Column(JSON, default={})
     created_at = Column(DateTime, default=datetime.utcnow)

@@ -15,6 +15,7 @@ from datetime import datetime
 from sse_starlette.sse import EventSourceResponse
 import asyncio
 import json
+from sqlalchemy.exc import IntegrityError
 
 # Global (in-memory) Assistants Dictionary
 assistants: Dict[str, AssistantClass] = {}
@@ -104,9 +105,9 @@ async def chat_stream(
         if assistant_name not in assistants:
             config = db_assistant.config if isinstance(db_assistant.config, dict) else {}
             if db_assistant.model_type == "openai":
-                model = OpenAIService()
+                model = OpenAIService(model=db_assistant.model_name)
             elif db_assistant.model_type == "ollama":
-                model = OllamaService()
+                model = OllamaService(model=db_assistant.model_name)
             else:
                 raise HTTPException(status_code=400, detail="Invalid model type")
 
@@ -167,10 +168,8 @@ async def chat_stream(
             generate(),
             media_type="text/event-stream",
             headers={
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                "Content-Type": "text/event-stream",
-                "X-Conversation-Id": str(conversation.id)  # Frontend buradan conversation_id öğreniyor
+                "X-Conversation-Id": str(conversation.id),
+                "Cache-Control": "no-cache"
             }
         )
 
@@ -186,42 +185,53 @@ async def create_assistant(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    """Yeni bir asistan kaydı oluştur."""
     try:
-        # Aynı isimde asistan var mı
-        query = select(AssistantModel).where(AssistantModel.name == assistant.name)
-        result = await db.execute(query)
-        existing_assistant = result.scalar_one_or_none()
-
-        if existing_assistant:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Assistant with name '{assistant.name}' already exists"
-            )
-
+        # Model servisini oluştur
+        if assistant.model_type == "openai":
+            model_service = OpenAIService(model=assistant.model_name)
+        elif assistant.model_type == "ollama":
+            model_service = OllamaService(model=assistant.model_name)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid model type")
+        
+        # Veritabanına kaydet
         db_assistant = AssistantModel(
             id=str(uuid.uuid4()),
             name=assistant.name,
             model_type=assistant.model_type,
+            model_name=assistant.model_name,
             system_message=assistant.system_message,
             config=assistant.config,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
             creator_id=current_user.id
         )
-
         db.add(db_assistant)
         await db.commit()
         await db.refresh(db_assistant)
-
+        
+        # Asistanı memory'ye ekle
+        new_assistant = AssistantClass(
+            name=assistant.name,
+            model=model_service,
+            system_message=assistant.system_message,
+            config=assistant.config
+        )
+        assistants[assistant.name] = new_assistant
+        
         return db_assistant
-
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        print(f"Error creating assistant: {str(e)}")
+        
+    except IntegrityError as e:
         await db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=409,
+            detail="Assistant name already exists"
+        )
+    except Exception as e:
+        await db.rollback()
+        print(f"Error creating assistant: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create assistant: {str(e)}"
+        )
 
 
 @router.get("/conversations", response_model=List[ConversationResponse])

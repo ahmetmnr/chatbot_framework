@@ -11,12 +11,14 @@ class AssistantDB:
         db: AsyncSession,
         name: str,
         model_type: str,
+        model_name: str,
         system_message: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None
     ) -> DBAssistant:
         db_assistant = DBAssistant(
             name=name,
             model_type=model_type,
+            model_name=model_name,
             system_message=system_message,
             config=config
         )
