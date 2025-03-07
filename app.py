@@ -1,10 +1,11 @@
 # Path: chatbot_framework/app.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import assistants, auth
+from routers import assistants_router, rag_router, documents_router,auth
 from core.database import Base, engine
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from config.logger import app_logger
 
 app = FastAPI()
 
@@ -29,7 +30,9 @@ async def init_db():
 
 # Routerları ekle
 app.include_router(auth.router)
-app.include_router(assistants.router)
+app.include_router(assistants_router)
+app.include_router(rag_router)
+app.include_router(documents_router)
 
 # Root endpoint - index.html'i serve et
 @app.get("/")
@@ -40,3 +43,16 @@ async def root():
 @app.get("/api")
 async def api_root():
     return {"message": "Welcome to AI Chat API"}
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    app_logger.error(
+        "Global hata: %s - URL: %s",
+        str(exc),
+        request.url.path,
+        exc_info=True
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"}
+    )

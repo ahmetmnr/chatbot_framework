@@ -64,6 +64,8 @@ class ChatApp {
         if (newChatButton) {
             newChatButton.addEventListener('click', () => this.startNewConversation());
         }
+
+        this.initFileUpload();
     }
 
     initializeApp() {
@@ -622,6 +624,98 @@ class ChatApp {
         if (this.chatMessages) {
             this.chatMessages.innerHTML = '';
         }
+    }
+
+    initFileUpload() {
+        const dropZone = document.querySelector('.file-drop-zone');
+        if (!dropZone) return;
+
+        // Drag & Drop event handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) await this.handleFileUpload(file);
+        });
+
+        // Click to upload
+        dropZone.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf,.docx,.txt,.md';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) await this.handleFileUpload(file);
+            };
+            input.click();
+        });
+    }
+
+    async handleFileUpload(file) {
+        // Dosya tipi kontrolü
+        const validTypes = ['application/pdf', 
+                          'text/plain',
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        
+        if(!validTypes.includes(file.type)) {
+            this.showError('Desteklenmeyen dosya formatı');
+            return;
+        }
+        
+        // Dosya boyutu kontrolü (20MB)
+        if(file.size > 20 * 1024 * 1024) {
+            this.showError('Dosya boyutu 20MB sınırını aşıyor');
+            return;
+        }
+        
+        // Yükleme işlemi
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`${this.apiUrl}/documents/upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: formData
+            });
+            
+            if(!response.ok) throw new Error(await response.text());
+            
+            // Başarılı yanıt
+            const result = await response.json();
+            this.updateFileList(result);
+            
+        } catch(error) {
+            console.error('Yükleme hatası:', error);
+            this.showError(`Sunucu hatası: ${error.message}`);
+        }
+    }
+
+    addFileToList(fileData) {
+        const fileList = document.querySelector('.file-list');
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item p-2 mb-2 border rounded';
+        fileItem.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-file-text me-2"></i>
+                    ${fileData.title} (${Math.round(fileData.file_size/1024)}KB)
+                </div>
+                <span class="badge bg-success">Yüklendi</span>
+            </div>
+        `;
+        fileList.prepend(fileItem);
     }
 }
 

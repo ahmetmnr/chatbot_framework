@@ -1,9 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional, List, Dict, Any
-from .models import Assistant as DBAssistant
-from .models import Conversation, Message, RAGSystem, RAGResult
+from .models import Assistant as DBAssistant, Assistant  # Add Assistant here
+from .models import Conversation, Message, RAGDocument
 from datetime import datetime
+import hashlib
+from core.schemas.enums import ProcessingStatus, FileType  # Add this import
 
 class AssistantDB:
     @staticmethod
@@ -63,7 +65,7 @@ class ConversationDB:
         conversation_id: str,
         role: str,
         content: str,
-        rag_results: Optional[List[Dict[str, Any]]] = None
+        #rag_results: Optional[List[Dict[str, Any]]] = None
     ) -> Message:
         message = Message(
             conversation_id=conversation_id,
@@ -73,16 +75,17 @@ class ConversationDB:
         db.add(message)
         await db.commit()
         
-        if rag_results:
-            for result in rag_results:
-                rag_result = RAGResult(
-                    message_id=message.id,
-                    rag_system_id=result["system_id"],
-                    context=result["context"],
-                    metadata=result.get("metadata")
-                )
-                db.add(rag_result)
-            await db.commit()
+        #if rag_results:
+            # RAGResult tablosu mevcut değil, bu kısmı kaldırıyoruz
+            # for result in rag_results:
+            #     rag_result = RAGResult(
+            #         message_id=message.id,
+            #         rag_system_id=result["system_id"],
+            #         context=result["context"],
+            #         metadata=result.get("metadata")
+            #     )
+            #     db.add(rag_result)
+            #await db.commit()
         
         return message
 
@@ -119,3 +122,59 @@ class ConversationDB:
             })
         
         return history 
+
+async def create_rag_document(db: AsyncSession, document_data: dict):
+    """Var olan metodun güncellenmiş hali"""
+    # Zorunlu alanlar için default değerler
+    default_values = {
+        "content": "",
+        "processing_status": ProcessingStatus.pending,
+        "file_type": FileType.unknown,
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow(),
+        "file_checksum": hashlib.sha256().hexdigest()[:64],  # Boş dosya için default checksum
+        "chunk_size": 1000  # Default chunk size
+    }
+    
+    # Mevcut veriyle default'ları birleştir
+    final_data = {**default_values, **document_data}
+    
+    # Veritabanı constraint'lerine uygun hale getir
+    rag_doc = RAGDocument(**final_data)
+    
+    db.add(rag_doc)
+    await db.commit()
+    await db.refresh(rag_doc)
+    return rag_doc
+
+async def create_assistant(db: AsyncSession, assistant_data: dict):
+    """Yeni eklenen metod"""
+    assistant = Assistant(
+        name=assistant_data["name"],
+        model_type=assistant_data["model_type"],
+        system_message=assistant_data.get("system_message", ""),
+        config=assistant_data.get("config", {}),
+        creator_id=assistant_data["creator_id"],
+        model_name=assistant_data.get("model_name", "gpt-3.5-turbo"),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    db.add(assistant)
+    await db.commit()
+    await db.refresh(assistant)
+    return assistant
+
+async def update_rag_document_partial(db: AsyncSession, doc_id: str, updates: dict):
+    """Var olan update metodunu bozmayan yeni versiyon"""
+    doc = await db.get(RAGDocument, doc_id)
+    if not doc:
+        return None
+    
+    for key, value in updates.items():
+        if hasattr(doc, key):
+            setattr(doc, key, value)
+    
+    doc.updated_at = datetime.utcnow()
+    await db.commit()
+    await db.refresh(doc)
+    return doc 

@@ -1,11 +1,21 @@
 from .db_connection import Base, get_db, engine, async_session
-from .models import Assistant, Conversation, Message, User, RAGDocument, RAGCollection, RAGDocumentCollection
+from .session import AsyncSessionLocal
+from .models import (
+    User,
+    Assistant,
+    Conversation,
+    Message,
+    RAGDocument,
+    RAGCollection,
+    RAGDocumentCollection
+)
 
 __all__ = [
     'Base', 
     'get_db', 
     'engine', 
     'async_session',
+    'AsyncSessionLocal',
     'Assistant',
     'Conversation',
     'Message',
@@ -14,3 +24,4 @@ __all__ = [
     'RAGCollection',
     'RAGDocumentCollection'
 ]
+

@@ -1,0 +1,1 @@
+# TÜM İÇERİĞİ SİLİYORUZ, BOŞ BIRAKIYORUZ

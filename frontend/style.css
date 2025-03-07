@@ -109,17 +109,24 @@ body {
 
 /* File Drop Zone */
 .file-drop-zone {
+    background-color: #f8f9fa;
     border: 2px dashed #dee2e6;
-    border-radius: 0.5rem;
-    padding: 2rem 1rem;
     transition: all 0.3s ease;
-    background: #fff;
+    cursor: pointer;
 }
 
-.file-drop-zone:hover {
-    border-color: var(--primary-color);
-    background-color: rgba(13, 110, 253, 0.05);
-    cursor: pointer;
+.file-drop-zone.drag-over {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.file-item {
+    background-color: white;
+    transition: transform 0.2s;
+}
+
+.file-item:hover {
+    transform: translateX(5px);
 }
 
 /* Scrollbar */

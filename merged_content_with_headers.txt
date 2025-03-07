@@ -14,6 +14,9 @@ Directory Tree / Dizin Ağacı:
 │   └── settings.py
 ├── core/
 │   ├── __init__.py
+│   ├── api/
+│   │   └── routers/
+│   ├── auth/
 │   ├── database/
 │   │   ├── __init__.py
 │   │   ├── crud.py
@@ -23,6 +26,7 @@ Directory Tree / Dizin Ağacı:
 │   ├── models/
 │   │   ├── __init__.py
 │   │   └── assistant.py
+│   ├── processing/
 │   ├── rag/
 │   │   ├── __init__.py
 │   │   ├── base_rag.py
@@ -31,20 +35,51 @@ Directory Tree / Dizin Ağacı:
 │   │   ├── rag_service.py
 │   │   ├── simple_rag.py
 │   │   └── vector_store.py
-│   └── services/
-│       ├── __init__.py
-│       ├── base_model.py
-│       ├── ollama_service.py
-│       └── openai_service.py
+│   ├── schemas/
+│   │   └── enums.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── base_model.py
+│   │   ├── document_processing.py
+│   │   ├── file_upload.py
+│   │   ├── ollama_service.py
+│   │   └── openai_service.py
+│   └── utils/
 ├── frontend/
 │   ├── app.js
 │   ├── index.html
+│   ├── js/
 │   ├── static/
 │   │   └── style.css
 │   └── style.css
 ├── get-pip.py
+├── logs/
+│   ├── 2025-01-28.log
+│   ├── 2025-01-29.log
+│   ├── 2025-01-30.log
+│   └── 2025-01-31.log
 ├── merged_content_with_headers.txt
 ├── models/
+├── processed_documents/
+│   ├── 08d123b0-9aaf-4282-854f-3a49844fe6e7.pdf
+│   ├── 2982e1dc-6037-4050-bdbd-db5fbe5a0e9b.pdf
+│   ├── 2d325009-e181-4ce6-8deb-749f8fb1397a.pdf
+│   ├── 2df87099-5011-4b40-8977-a8526e31c33e.pdf
+│   ├── 4bae14db-a08e-4c94-a958-b923bddea679.pdf
+│   ├── 5579e960-74e9-46d4-bdab-abc49d8fcbf7.pdf
+│   ├── 58670ac1-5b3f-49c5-871b-aec1f2a86ec5.pdf
+│   ├── 5f2ae060-b332-4506-bb5e-ea96db5fe537.pdf
+│   ├── 64f2cc8e-da34-4c48-8017-9be1fdaa93e6.pdf
+│   ├── 6531a15c-b3b4-4d9a-b191-19cf33a2cb11.pdf
+│   ├── 6f1a5866-ce7c-408d-a253-23a1af78992a.pdf
+│   ├── a0182176-7f4f-46e2-88ec-2f1eb223bf8d.pdf
+│   ├── aa32e8fe-ee14-4833-a3be-6471afdd4df8.pdf
+│   ├── adc68c6c-7806-48ef-aa51-f4bdb6e6873a.pdf
+│   ├── d26ea2df-2b05-42eb-aee3-ef5746a05eba.pdf
+│   ├── d69be94d-b1b5-4df1-8378-0fd6c73951d6.pdf
+│   ├── e4f2421a-ca7f-47d1-8786-c0661399d02a.pdf
+│   ├── e6912368-e0ba-418a-9fe5-c49f185824bf.pdf
+│   └── fe2bfaf4-74ff-440e-978e-7cc19b21c6a6.pdf
 ├── readfiles.py
 ├── repositories/
 ├── requirements.txt
@@ -52,6 +87,7 @@ Directory Tree / Dizin Ağacı:
 │   ├── __init__.py
 │   ├── assistants.py
 │   ├── auth.py
+│   ├── documents.py
 │   └── rag.py
 ├── scripts/
 │   ├── check_tables.py
@@ -59,6 +95,50 @@ Directory Tree / Dizin Ağacı:
 │   ├── recreate_tables.py
 │   └── test_database.py
 ├── setup.py
+├── temp/
+│   ├── 05e1e83b-779e-44c7-b355-455b1f3c67ee.pdf
+│   ├── 084f3d4b-af84-4c16-8d82-69d4383f3c2e.pdf
+│   ├── 090e55e6-0052-4426-ae35-29d2f809bb45.pdf
+│   ├── 10484036-a821-44e0-b374-1ff8f7b9fa18.pdf
+│   ├── 117fd05c-ff7f-4adc-97b3-5a020f31d62a.pdf
+│   ├── 175d83f1-acbf-4517-8f3f-ff4705da935d.pdf
+│   ├── 24f57cbd-0899-4162-98e5-08189879f695.pdf
+│   ├── 29465e7e-1217-42f4-a5a6-57595bbe7a9b.pdf
+│   ├── 2af9b97c-2a5c-4049-a155-e88c6460d2d5.pdf
+│   ├── 2e54faf5-f7e3-49ea-b983-978524729274.pdf
+│   ├── 35ff0848-4c72-4974-8779-18edd65530df.pdf
+│   ├── 36812d58-06fa-40e0-bf4b-eb10ebfc5647.pdf
+│   ├── 38f699d8-effe-405d-88a3-8e613495d005.pdf
+│   ├── 4b23df23-7d0e-4de7-bbd7-6953e2ea6858.pdf
+│   ├── 4f414a79-68ca-4766-8190-1583b6e5bc9f.pdf
+│   ├── 671143a9-3ab3-464f-8886-09c2f809ccac.pdf
+│   ├── 71a2eba2-fcb9-408e-adec-d291cbaf3ef0.pdf
+│   ├── 876c6feb-ae72-4ebf-821d-3a4f01a563d7.pdf
+│   ├── 8bd51dc6-889e-41e1-bf54-42a6a58444ee.pdf
+│   ├── 8e73fd4d-60c3-4895-9edb-9a55e0d1b279.pdf
+│   ├── 92d257cd-b106-4b28-b2ed-6ae64b578878.pdf
+│   ├── 9f9b3a9c-38a3-4179-8825-4712d4e438e7.pdf
+│   ├── a1c92533-f827-464a-a388-e691b62c758d.pdf
+│   ├── aa104e22-2ed4-4191-9dd2-c806ff121326.pdf
+│   ├── aa49fe3d-556d-4476-8ee6-08091cb7c42f.pdf
+│   ├── ab338533-a8ce-4122-a9c0-19eae81ed70e.pdf
+│   ├── ac566dca-bfcc-43a7-b648-81f714d8d447.pdf
+│   ├── b4dd4fb8-21f2-4c21-abb4-180e5fa74f4d.pdf
+│   ├── b58347c4-745a-4327-bc9e-26e983c5e392.pdf
+│   ├── b8fc6e5c-5aa4-4391-b772-8baae6c62b90.pdf
+│   ├── bbfbe195-4a65-4654-878c-868ebc7b0854.pdf
+│   ├── bebfae74-18c8-405c-acdb-ba648c7aef61.txt
+│   ├── c3275488-4034-40a6-8708-1717e12eb2d9.pdf
+│   ├── c35452ae-993e-431c-824d-b1c47cfb2aba.pdf
+│   ├── ce61657c-b0b9-40e0-ba91-66d3009b617e.pdf
+│   ├── d6d5c6c1-94c7-48a2-93a7-9c066398f703.pdf
+│   ├── d94eb23f-2cb0-4f7b-bcf8-a4f1cefcbda2.pdf
+│   ├── e68553c8-a68e-4232-b622-f06d7e482a96.pdf
+│   ├── e8992bc1-0972-4833-b3a9-9dfc59c2215b.md
+│   ├── e92a8975-6934-4ca7-82b6-814617614df5.pdf
+│   ├── ec65127b-5f1c-4857-865d-46376788f2c6.pdf
+│   ├── f1762e19-50b0-41ff-aa34-30d48707d31f.pdf
+│   └── faf00dd0-cecd-49a7-8f85-be2359b5e2a5.pdf
 ├── test_api.py
 ├── test_core.py
 ├── test_multi_rag.py
@@ -74,10 +154,11 @@ Directory: C:\Users\Tuga-Munir\source\repos\chatbot_framework
 # Path: chatbot_framework/app.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import assistants, auth
+from routers import assistants_router, rag_router, documents_router,auth
 from core.database import Base, engine
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
+from config.logger import app_logger
 
 app = FastAPI()
 
@@ -88,6 +169,7 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["X-Conversation-Id"]  # Bu header'ın expose edildiğinden emin olun
 )
 
 # Frontend dosyalarını serve et
@@ -101,7 +183,9 @@ async def init_db():
 
 # Routerları ekle
 app.include_router(auth.router)
-app.include_router(assistants.router)
+app.include_router(assistants_router)
+app.include_router(rag_router)
+app.include_router(documents_router)
 
 # Root endpoint - index.html'i serve et
 @app.get("/")
@@ -113,6 +197,19 @@ async def root():
 async def api_root():
     return {"message": "Welcome to AI Chat API"}
 
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    app_logger.error(
+        "Global hata: %s - URL: %s",
+        str(exc),
+        request.url.path,
+        exc_info=True
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Internal server error"}
+    )
+
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\readfiles.py ====
 import os
@@ -123,7 +220,7 @@ import os
 DIRECTORY_TO_SCAN = r"C:\Users\Tuga-Munir\source\repos\chatbot_framework"
 
 # Folders to exclude / Hariç tutmak istediğiniz klasörler
-IGNORED_DIRS = ["venv", ".git", "__pycache__"]
+IGNORED_DIRS = ["venv", ".git", "__pycache__",".venv"]
 
 # Files to exclude / Hariç tutmak istediğiniz dosyalar
 IGNORED_FILES = ["get-pip.py", ".gitignore"]
@@ -522,27 +619,11 @@ def get_assistant(name: str) -> Assistant:
         raise HTTPException(status_code=404, detail="Assistant not found")
     return assistants[name] 
 
-async def get_test_user(db: AsyncSession = Depends(get_db)) -> User:
-    """Geçici olarak test kullanıcısını döndürür"""
-    query = select(User).where(User.username == 'test_user')
-    result = await db.execute(query)
-    user = result.scalar_one_or_none()
-    
-    if not user:
-        # Test kullanıcısı yoksa oluştur
-        user = User(
-            id=str(uuid.uuid4()),
-            username='test_user',
-            email='test@example.com'
-        )
-        db.add(user)
-        await db.commit()
-        await db.refresh(user)
-    
-    return user
+# Auth router'ındaki gerçek current_user fonksiyonunu import ediyoruz
+from routers.auth import get_current_user
 
-# İleride gerçek auth sistemi eklendiğinde bu fonksiyon değiştirilecek
-get_current_user = get_test_user 
+# Bağımlılığı gerçek auth sistemine yönlendiriyoruz
+get_current_user = get_current_user 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\api\schemas.py ====
 from pydantic import BaseModel, EmailStr
@@ -570,9 +651,10 @@ class Token(BaseModel):
 
 class AssistantCreate(BaseModel):
     name: str
-    model_type: str
+    model_type: str  # "openai" veya "ollama"
+    model_name: str  # "gpt-4", "llama2" gibi
     system_message: str
-    config: Dict[str, Any]
+    config: dict = {}
 
 class AssistantResponse(BaseModel):
     id: str
@@ -654,6 +736,41 @@ from .schemas import *
 from .dependencies import * 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\config\logger.py ====
+import logging
+from pathlib import Path
+from datetime import datetime
+import sys
+
+# Log klasörünü oluştur
+LOG_DIR = Path("logs")
+LOG_DIR.mkdir(exist_ok=True)
+
+# Log formatı
+FORMATTER = logging.Formatter(
+    "%(asctime)s — %(name)s — %(levelname)s — %(message)s"
+)
+
+# Temel logger konfigürasyonu
+def setup_logger(name, level=logging.INFO):
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    # Konsol çıktısı
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setFormatter(FORMATTER)
+    
+    # Dosya çıktısı
+    file_handler = logging.FileHandler(
+        LOG_DIR / f"{datetime.now().strftime('%Y-%m-%d')}.log"
+    )
+    file_handler.setFormatter(FORMATTER)
+
+    logger.addHandler(console_handler)
+    logger.addHandler(file_handler)
+    return logger
+
+# Uygulama geneli logger
+app_logger = setup_logger("chatbot_app")
 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\config\settings.py ====
@@ -669,9 +786,11 @@ from .dependencies import *
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Optional, List, Dict, Any
-from .models import Assistant as DBAssistant
-from .models import Conversation, Message, RAGSystem, RAGResult
+from .models import Assistant as DBAssistant, Assistant  # Add Assistant here
+from .models import Conversation, Message, RAGDocument
 from datetime import datetime
+import hashlib
+from core.schemas.enums import ProcessingStatus, FileType  # Add this import
 
 class AssistantDB:
     @staticmethod
@@ -679,12 +798,14 @@ class AssistantDB:
         db: AsyncSession,
         name: str,
         model_type: str,
+        model_name: str,
         system_message: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None
     ) -> DBAssistant:
         db_assistant = DBAssistant(
             name=name,
             model_type=model_type,
+            model_name=model_name,
             system_message=system_message,
             config=config
         )
@@ -729,7 +850,7 @@ class ConversationDB:
         conversation_id: str,
         role: str,
         content: str,
-        rag_results: Optional[List[Dict[str, Any]]] = None
+        #rag_results: Optional[List[Dict[str, Any]]] = None
     ) -> Message:
         message = Message(
             conversation_id=conversation_id,
@@ -739,16 +860,17 @@ class ConversationDB:
         db.add(message)
         await db.commit()
         
-        if rag_results:
-            for result in rag_results:
-                rag_result = RAGResult(
-                    message_id=message.id,
-                    rag_system_id=result["system_id"],
-                    context=result["context"],
-                    metadata=result.get("metadata")
-                )
-                db.add(rag_result)
-            await db.commit()
+        #if rag_results:
+            # RAGResult tablosu mevcut değil, bu kısmı kaldırıyoruz
+            # for result in rag_results:
+            #     rag_result = RAGResult(
+            #         message_id=message.id,
+            #         rag_system_id=result["system_id"],
+            #         context=result["context"],
+            #         metadata=result.get("metadata")
+            #     )
+            #     db.add(rag_result)
+            #await db.commit()
         
         return message
 
@@ -785,6 +907,62 @@ class ConversationDB:
             })
         
         return history 
+
+async def create_rag_document(db: AsyncSession, document_data: dict):
+    """Var olan metodun güncellenmiş hali"""
+    # Zorunlu alanlar için default değerler
+    default_values = {
+        "content": "",
+        "processing_status": ProcessingStatus.pending,
+        "file_type": FileType.unknown,
+        "created_at": datetime.utcnow(),
+        "updated_at": datetime.utcnow(),
+        "file_checksum": hashlib.sha256().hexdigest()[:64],  # Boş dosya için default checksum
+        "chunk_size": 1000  # Default chunk size
+    }
+    
+    # Mevcut veriyle default'ları birleştir
+    final_data = {**default_values, **document_data}
+    
+    # Veritabanı constraint'lerine uygun hale getir
+    rag_doc = RAGDocument(**final_data)
+    
+    db.add(rag_doc)
+    await db.commit()
+    await db.refresh(rag_doc)
+    return rag_doc
+
+async def create_assistant(db: AsyncSession, assistant_data: dict):
+    """Yeni eklenen metod"""
+    assistant = Assistant(
+        name=assistant_data["name"],
+        model_type=assistant_data["model_type"],
+        system_message=assistant_data.get("system_message", ""),
+        config=assistant_data.get("config", {}),
+        creator_id=assistant_data["creator_id"],
+        model_name=assistant_data.get("model_name", "gpt-3.5-turbo"),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    db.add(assistant)
+    await db.commit()
+    await db.refresh(assistant)
+    return assistant
+
+async def update_rag_document_partial(db: AsyncSession, doc_id: str, updates: dict):
+    """Var olan update metodunu bozmayan yeni versiyon"""
+    doc = await db.get(RAGDocument, doc_id)
+    if not doc:
+        return None
+    
+    for key, value in updates.items():
+        if hasattr(doc, key):
+            setattr(doc, key, value)
+    
+    doc.updated_at = datetime.utcnow()
+    await db.commit()
+    await db.refresh(doc)
+    return doc 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\database\db_connection.py ====
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
@@ -831,11 +1009,13 @@ __all__ = ['Base', 'get_db', 'engine', 'async_session']
 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\database\models.py ====
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON, LargeBinary
+from sqlalchemy.orm import relationship, deferred
 from datetime import datetime
 from .db_connection import Base
 import uuid
+from sqlalchemy.types import Enum
+from core.schemas.enums import ProcessingStatus, FileType
 
 class User(Base):
     __tablename__ = "users"
@@ -858,6 +1038,7 @@ class Assistant(Base):
     id = Column(String, primary_key=True, index=True)
     name = Column(String, unique=True)
     model_type = Column(String)
+    model_name = Column(String)
     system_message = Column(String)
     config = Column(JSON, default={})
     created_at = Column(DateTime, default=datetime.utcnow)
@@ -897,16 +1078,31 @@ class Message(Base):
 
 class RAGDocument(Base):
     __tablename__ = "rag_documents"
-
-    id = Column(String, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    content = Column(Text, nullable=False)
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String(255))
+    content = Column(Text)
+    file_path = Column(String(500))
+    file_checksum = Column(String(64))
+    file_size = Column(Integer)
+    chunk_size = Column(Integer)
+    processing_status = Column(
+        Enum(ProcessingStatus, name="processing_status_enum"),
+        default=ProcessingStatus.pending
+    )
+    embeddings = Column(LargeBinary)
     meta_data = Column(JSON)
     user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
-
-    # Relationships
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    file_type = Column(
+        Enum(FileType, name="file_type_enum"),
+        default=FileType.unknown
+    )
+    embedding_model = Column(String)
+    chunking_method = Column(String)
+    processing_errors = Column(Text)
+    
     user = relationship("User", back_populates="rag_documents")
     collections = relationship(
         "RAGCollection",
@@ -992,13 +1188,23 @@ __all__ = ['Base', 'get_db', 'engine', 'AsyncSessionLocal', 'init_db']
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\database\__init__.py ====
 from .db_connection import Base, get_db, engine, async_session
-from .models import Assistant, Conversation, Message, User, RAGDocument, RAGCollection, RAGDocumentCollection
+from .session import AsyncSessionLocal
+from .models import (
+    User,
+    Assistant,
+    Conversation,
+    Message,
+    RAGDocument,
+    RAGCollection,
+    RAGDocumentCollection
+)
 
 __all__ = [
     'Base', 
     'get_db', 
     'engine', 
     'async_session',
+    'AsyncSessionLocal',
     'Assistant',
     'Conversation',
     'Message',
@@ -1007,6 +1213,7 @@ __all__ = [
     'RAGCollection',
     'RAGDocumentCollection'
 ]
+
 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\models\assistant.py ====
@@ -1037,6 +1244,7 @@ class Assistant:
             yield f"Error: {str(e)}"
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\models\__init__.py ====
+# TÜM İÇERİĞİ SİLİYORUZ, BOŞ BIRAKIYORUZ
 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\rag\base_rag.py ====
@@ -1356,6 +1564,22 @@ def get_vector_store() -> BaseVectorStore:
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\rag\__init__.py ====
 
 
+==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\schemas\enums.py ====
+from enum import Enum
+
+class ProcessingStatus(str, Enum):
+    pending = "pending"
+    processing = "processing"
+    completed = "completed"
+    failed = "failed"
+
+class FileType(str, Enum):
+    pdf = "pdf"
+    docx = "docx"
+    txt = "txt"
+    md = "md"
+    unknown = "unknown" 
+
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\services\base_model.py ====
 # Path: chatbot_framework/core/services/base_model.py
 
@@ -1386,6 +1610,464 @@ class BaseLanguageModel(ABC):
         """Metin embedding'leri için temel metod"""
         pass 
 
+==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\services\document_processing.py ====
+from core.database.models import RAGDocument
+from core.schemas.enums import ProcessingStatus
+from langchain_community.document_loaders import UnstructuredFileLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain.schema import Document
+import uuid
+from pathlib import Path
+import pickle
+from sqlalchemy import select
+from typing import List
+from fastapi import HTTPException
+from config.logger import app_logger
+from core.services.file_upload import FileUploadService
+from core.database.session import AsyncSessionLocal
+from core.schemas.enums import FileType
+import chardet
+import hashlib
+from unstructured.partition.auto import partition
+from unstructured.partition.pdf import partition_pdf
+from pi_heif import register_heif_opener
+import os
+import asyncio
+from datetime import datetime
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import text
+
+
+# PDF/DOCX Processing
+from pypdf import PdfReader
+from docx import Document as DocxDocument
+
+# Chunking - DÜZELTİLMİŞ IMPORT
+from langchain_experimental.text_splitter import SemanticChunker, BreakpointThresholdType
+
+class DocumentProcessor:
+    def __init__(self):
+        self.embedding_model = HuggingFaceEmbeddings(
+            model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2"
+        )
+        self.processed_dir = Path("processed_documents")
+        self.processed_dir.mkdir(exist_ok=True)
+
+    async def process_document(
+        self,
+        file_path: str,
+        text_content: str,
+        user_id: str,
+        chunk_size: int = 1000,
+        chunk_overlap: int = 200,
+        max_file_size: int = 50 * 1024 * 1024
+    ) -> List[RAGDocument]:
+        """
+        Güncellenmiş belge işleme akışı:
+        1. Doğrudan gelen içeriği kullan
+        2. Semantik chunking
+        3. Veritabanına kayıt
+        """
+        try:
+            # 1. Gelen içeriği temizle
+            #cleaned_content = self._clean_text(text_content)
+            
+            # 2. Semantik Chunking
+            chunks = await self._semantic_chunking(
+                text_content,
+                chunk_size,
+                chunk_overlap
+            )
+            
+            # 3. Veritabanına Toplu Kayıt
+            return await self._bulk_insert_chunks(
+                file_path=file_path,
+                user_id=user_id,
+                chunks=chunks,
+                original_content=text_content
+            )
+            
+        except Exception as e:
+            app_logger.error(f"Belge işleme hatası: {str(e)}")
+            raise HTTPException(500, "Belge işlenemedi")
+
+    def _validate_file(self, file_path: str, max_size: int):
+        """Dosya validasyonu"""
+        # Tip kontrolü ekleyelim
+        if not isinstance(file_path, (str, bytes, os.PathLike)):
+            raise TypeError(f"Geçersiz dosya yolu tipi: {type(file_path)}")
+        
+        if not os.path.exists(file_path):
+            raise HTTPException(404, "Dosya bulunamadı")
+            
+        if os.path.getsize(file_path) > max_size:
+            raise HTTPException(413, "Dosya boyutu limiti aşıldı (50MB)")
+
+    async def _extract_text(self, file_path: str) -> str:
+        """Dosya türüne göre metin çıkarımı"""
+        file_ext = os.path.splitext(file_path)[1].lower()
+        
+        try:
+            if file_ext == ".pdf":
+                text = await self._read_pdf(file_path)
+            elif file_ext == ".docx":
+                text = await self._read_docx(file_path)
+            else:
+                raise HTTPException(400, "Desteklenmeyen dosya formatı")
+            
+            
+            # Metni temizleme
+            return self._clean_text(text)
+
+        except Exception as e:
+            app_logger.error(f"Metin çıkarım hatası: {str(e)}")
+            raise HTTPException(500, "Dosya içeriği okunamadı")
+
+
+    # PDF'den metin çıkarımı
+
+    async def _read_pdf(self, file_path: str) -> str:
+        """PDF'den metin çıkarımı (Unstructured ile, OCR devre dışı)"""
+        from unstructured.partition.pdf import partition_pdf
+
+        elements = partition_pdf(
+            filename=file_path,
+            strategy="hi_res",         # "auto" yerine "hi_res" veya "fast" vb. kullanılabilir
+            infer_table_structure=True,
+            languages=["tur", "eng"],
+            ocr_strategy="none"        # <-- OCR kapalı
+        )
+        return "\n\n".join([str(e) for e in elements])
+
+
+    async def _read_pdf(self, file_path: str) -> str:
+        """PDF'den metin çıkarımı (Unstructured ile)"""
+        elements = partition_pdf(
+            filename=file_path,
+            strategy="auto",
+            infer_table_structure=True,
+            languages=["tur", "eng"]
+        )
+        return "\n\n".join([str(e) for e in elements])
+
+    async def _read_docx(self, file_path: str) -> str:
+        """DOCX'ten metin çıkarımı"""
+        def sync_read():
+            doc = DocxDocument(file_path)
+            return "\n".join([p.text for p in doc.paragraphs])
+            
+        return await asyncio.to_thread(sync_read)
+
+    async def _semantic_chunking(
+        self,
+        text: str,
+        chunk_size: int,
+        chunk_overlap: int
+    ) -> List[str]:
+        """Advanced semantic chunking with multiple threshold strategies"""
+        chunker = SemanticChunker(
+            embeddings=self.embedding_model,
+            breakpoint_threshold_type=BreakpointThresholdType.PERCENTILE,  # Default strategy
+            breakpoint_threshold_amount=85,  # 85th percentile cutoff
+            min_chunk_size=100  # Minimum characters per chunk
+        )
+        
+        return await asyncio.to_thread(
+            chunker.split_text,
+            text=text,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap
+        )
+
+    # Optional alternative strategies
+    def _create_standard_deviation_chunker(self):
+        return SemanticChunker(
+            embeddings=self.embedding_model,
+            breakpoint_threshold_type=BreakpointThresholdType.STANDARD_DEVIATION,
+            breakpoint_threshold_amount=2.5  # 2.5 standard deviations
+        )
+
+    def _create_interquartile_chunker(self):
+        return SemanticChunker(
+            embeddings=self.embedding_model,
+            breakpoint_threshold_type=BreakpointThresholdType.INTERQUARTILE,
+            breakpoint_threshold_amount=1.8  # 1.8 * IQR
+        )
+
+    def _create_gradient_chunker(self):
+        return SemanticChunker(
+            embeddings=self.embedding_model,
+            breakpoint_threshold_type="gradient",  # Experimental gradient method
+            breakpoint_threshold_amount=90  # 90th percentile on gradient
+        )
+
+    async def _bulk_insert_chunks(
+        self,
+        file_path: str,
+        user_id: str,
+        chunks: List[str],
+        original_content: str
+    ) -> List[RAGDocument]:
+        """Toplu veri ekleme ile performans optimizasyonu"""
+        file_checksum = hashlib.sha256(original_content.encode()).hexdigest()
+        file_size = os.path.getsize(file_path)
+        file_type = os.path.splitext(file_path)[1][1:].upper()
+        created_at = datetime.utcnow()
+
+        # RAGDocument nesnelerini oluştur
+        documents = [
+            RAGDocument(
+                title=f"{os.path.basename(file_path)} - Chunk {i}",
+                content=self._clean_text(chunk),
+                user_id=user_id,
+                file_path=file_path,
+                file_type=file_type,
+                file_size=file_size,
+                file_checksum=file_checksum,
+                processing_status=ProcessingStatus.PROCESSED,
+                chunk_size=len(chunk),
+                chunk_index=i,
+                created_at=created_at,
+                updated_at=created_at,
+                metadata={
+                    "chunking_method": "semantic_v2",
+                    "language": "turkish",
+                    "checksum": hashlib.sha256(chunk.encode()).hexdigest()
+                }
+            )
+            for i, chunk in enumerate(chunks)
+        ]
+
+        # Toplu veritabanı işlemi
+        async with AsyncSessionLocal() as session:
+            try:
+                session.add_all(documents)
+                await session.commit()
+                return documents
+            except Exception as e:
+                await session.rollback()
+                app_logger.error(f"Veritabanı kayıt hatası: {str(e)}")
+                raise HTTPException(500, "Veritabanı işlemi başarısız")
+
+    def _detect_file_type(self, filename: str) -> str:
+        ext = filename.split(".")[-1].lower()
+        if ext in ["pdf", "docx", "txt", "md"]:
+            return ext
+        raise ValueError("Desteklenmeyen dosya formatı")
+
+    def _move_to_processed(self, temp_path: str, doc_id: str) -> Path:
+        final_path = self.processed_dir / f"{doc_id}.pdf"
+        Path(temp_path).rename(final_path)
+        return final_path 
+
+    async def get_user_documents(self, user_id: str):
+        result = await self.db.execute(
+            select(RAGDocument)
+            .filter(RAGDocument.user_id == user_id)
+            .order_by(RAGDocument.created_at.desc())
+        )
+        return result.scalars().all()
+
+    async def _store_embeddings(self, doc: RAGDocument, chunks: List[Document]):
+        try:
+            from core.rag.vector_store import get_vector_store
+            vector_store = get_vector_store()
+            
+            texts = [chunk.page_content for chunk in chunks]
+            embeddings = self.embedding_model.embed_documents(texts)
+            
+            await vector_store.bulk_insert(
+                texts=texts,
+                embeddings=embeddings,
+                metadatas=[{
+                    "doc_id": doc.id,
+                    "source": doc.title,
+                    "page": idx
+                } for idx in range(len(chunks))]
+            )
+            
+            doc.processing_status = "processed"
+            await self.db.commit()
+        except Exception as e:
+            doc.processing_status = "failed"
+            doc.processing_errors = str(e)
+            await self.db.commit()
+            raise 
+
+    async def _save_embeddings(self, chunks: List[Document]):
+        try:
+            # Numpy array'i bytes'a çevirme
+            embeddings = self.embedding_model.embed_documents([chunk.page_content for chunk in chunks])
+            return [emb.tobytes() for emb in embeddings]  # Numpy array -> bytes
+        except Exception as e:
+            app_logger.error(f"Embedding hatası: {str(e)}")
+            raise 
+
+    async def read_file_content(self, content: bytes, file_extension: str) -> str:
+        """Dosya içeriğini doğru encoding ile okur"""
+        try:
+            # 1. Encoding tespiti
+            detected = chardet.detect(content)
+            encoding = detected['encoding'] or 'utf-8'
+            
+            # 2. Türkçe karakterler için özel handling
+            try:
+                return content.decode(encoding)
+            except UnicodeDecodeError:
+                return content.decode('iso-8859-1')  # Fallback encoding
+            except LookupError:
+                return content.decode('utf-8', errors='replace')
+            
+        except Exception as e:
+            app_logger.warning(f"Dosya içeriği okunamadı ({file_extension}): {str(e)}")
+            return "" 
+
+
+    def _clean_text(self, text: str) -> str:
+        """Metni temizleme ve normalleştirme"""
+        return text.replace('\x00', '').replace('\ufeff', '').strip()
+
+    async def _adaptive_chunking(self, text: str) -> List[str]:
+        """Bağlama duyarlı chunklama"""
+       # from semantic_chunking import SemanticChunker
+        chunker = SemanticChunker(
+            breakpoint_threshold_type="percentile",
+            breakpoint_threshold_amount=85
+        )
+        return chunker.split_text(text)
+
+    async def _batch_embedding(self, chunks: List[str]) -> List[List[float]]:
+        """Toplu embedding işlemi"""
+        from sentence_transformers import SentenceTransformer
+        model = SentenceTransformer('sentence-transformers/paraphrase-multilingual-mpnet-base-v2')
+        return model.encode(chunks).tolist()
+
+    def _generate_semantic_hash(self, text: str) -> str:
+        """Metin için anlamsal hash üretimi"""
+        return hashlib.sha256(text.encode('utf-8')).hexdigest()[:16] 
+
+==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\services\file_upload.py ====
+import hashlib
+from fastapi import UploadFile, HTTPException
+from pathlib import Path
+import uuid
+from typing import Optional
+from config.logger import app_logger
+from core.schemas.enums import FileType
+from PyPDF2 import PdfReader
+from docx import Document
+import io
+
+class FileUploadService:
+    def __init__(self):
+        self.temp_dir = Path("temp")
+        self.temp_dir.mkdir(exist_ok=True)
+        
+        self.processed_dir = Path("processed_documents")
+        self.processed_dir.mkdir(exist_ok=True)
+
+    async def read_file_content(self, content: bytes, file_extension: str) -> str:
+        """Dosya içeriğini okur ve metin olarak döndürür."""
+        try:
+            if file_extension == '.pdf':
+                pdf = PdfReader(io.BytesIO(content))
+                return "\n".join(page.extract_text() for page in pdf.pages)
+                
+            elif file_extension == '.docx':
+                doc = Document(io.BytesIO(content))
+                return "\n".join(paragraph.text for paragraph in doc.paragraphs)
+                
+            elif file_extension in ['.txt', '.md']:
+                return content.decode('utf-8')
+                
+            return ""  # Desteklenmeyen dosya tipi için boş string
+            
+        except Exception as e:
+            app_logger.error(f"Dosya içeriği okuma hatası: {str(e)}")
+            return ""
+
+    async def save_temp_file(self, file: UploadFile, current_user=None) -> dict:
+        try:
+            # 1. Dosya validasyonu
+            if not file.filename:
+                raise HTTPException(400, "Geçersiz dosya adı")
+                
+            file_extension = Path(file.filename).suffix.lower()
+            allowed_extensions = {'.pdf', '.docx', '.txt', '.md'}
+            if file_extension not in allowed_extensions:
+                raise HTTPException(400, "Desteklenmeyen dosya formatı")
+
+            # 2. Dosya boyutu kontrolü (max 20MB)
+            max_size = 20 * 1024 * 1024  # 20MB
+            content = await file.read()
+            if len(content) > max_size:
+                raise HTTPException(413, "Dosya boyutu 20MB'ı aşıyor")
+
+            # 3. Checksum hesapla ve tekrarı kontrol et
+            checksum = hashlib.sha256(content).hexdigest()
+            existing = await self.check_existing_file(checksum)
+            if existing:
+                return existing
+
+            # 4. Dosya içeriğini oku
+            file_content_str = await self.read_file_content(content, file_extension)
+            if not file_content_str:
+                app_logger.warning(f"Boş içerik: {file.filename}")
+                file_content_str = ""  # NULL yerine boş string
+
+            # 5. Geçici dosyayı kaydet
+            file_id = f"{uuid.uuid4()}{file_extension}"
+            temp_path = self.temp_dir / file_id
+            
+            with open(temp_path, "wb") as f:
+                f.write(content)
+                
+            # Dosya tipini belirleme
+            file_type_map = {
+                '.pdf': FileType.pdf,
+                '.docx': FileType.docx,
+                '.txt': FileType.txt,
+                '.md': FileType.md
+            }
+            file_type = file_type_map.get(file_extension, FileType.unknown)
+            
+            return {
+                "file_id": file_id,
+                "original_name": file.filename,
+                "size": len(content),
+                "checksum": checksum,
+                "temp_path": str(temp_path),
+                "content_type": file.content_type,
+                "file_type": file_type,
+                "content": file_content_str  # Mutlaka string gönder
+            }
+            
+        except HTTPException as he:
+            app_logger.error(
+                "Dosya yükleme hatası (Kullanıcı: %s): %s", 
+                current_user.id if current_user else "anon", 
+                str(he.detail)
+            )
+            raise he
+        except Exception as e:
+            app_logger.exception("Beklenmeyen yükleme hatası")
+            raise HTTPException(500, "Dosya işlenemedi")
+
+    async def move_to_processed(self, temp_path: str) -> str:
+        processed_path = self.processed_dir / Path(temp_path).name
+        Path(temp_path).rename(processed_path)
+        return str(processed_path)
+
+    async def check_existing_file(self, checksum: str) -> Optional[dict]:
+        # Veritabanında checksum kontrolü yap
+        # Örnek implementasyon:
+        # from core.database import get_db
+        # async with get_db() as db:
+        #     existing = await db.execute(select(RAGDocument).filter_by(file_checksum=checksum))
+        #     if existing: return existing.first()
+        return None 
+
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\core\services\ollama_service.py ====
 # Path: chatbot_framework/core/services/ollama_service.py
 
@@ -1393,16 +2075,15 @@ from .base_model import BaseLanguageModel
 import httpx
 from typing import List, Optional, AsyncGenerator, Union, AsyncIterator
 import json
+import os
+import aiohttp
 
 class OllamaService(BaseLanguageModel):
-    def __init__(self, 
-                 base_url: str = "http://localhost:11434", 
-                 model: str = "llama3.2",
-                 timeout: int = 30):
-        self.base_url = base_url
+    def __init__(self, model: str = "llama2"):
+        self.base_url = "http://localhost:11434"
         self.model = model
-        self.timeout = timeout
-        self.client = httpx.AsyncClient(timeout=timeout)
+        self.timeout = 30
+        self.client = httpx.AsyncClient(timeout=self.timeout)
 
     async def generate(self, 
                       prompt: str, 
@@ -1487,35 +2168,35 @@ class OllamaService(BaseLanguageModel):
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         await self.client.aclose()
 
-    async def chat_stream(self, message: str, system_message: Optional[str] = None) -> AsyncIterator[str]:
-        try:
-            prompt = message
-            if system_message:
-                prompt = f"{system_message}\n\nUser: {message}\nAssistant:"
+    async def chat_stream(self, prompt: str, system_message: str = None) -> AsyncGenerator[str, None]:
+        messages = []
+        if system_message:
+            messages.append({"role": "system", "content": system_message})
+        messages.append({"role": "user", "content": prompt})
 
-            async with httpx.AsyncClient() as client:
-                async with client.stream(
-                    'POST',
-                    f"{self.base_url}/api/generate",
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(
+                    f"{self.base_url}/api/chat",
                     json={
                         "model": self.model,
-                        "prompt": prompt,
+                        "messages": messages,
                         "stream": True
                     }
                 ) as response:
-                    async for line in response.aiter_lines():
-                        if not line:
-                            continue
-                        try:
-                            data = json.loads(line)
-                            if "response" in data:
-                                yield data["response"]
-                        except json.JSONDecodeError:
-                            continue
+                    if response.status != 200:
+                        error = await response.text()
+                        raise Exception(f"Ollama API error: {error}")
 
-        except Exception as e:
-            print(f"Ollama stream error: {str(e)}")
-            yield f"Error: {str(e)}"
+                    async for line in response.content:
+                        if line:
+                            chunk = json.loads(line)
+                            if "message" in chunk and "content" in chunk["message"]:
+                                yield chunk["message"]["content"]
+                                
+            except Exception as e:
+                print(f"Ollama stream error: {str(e)}")
+                yield f"Error: {str(e)}"
 
     async def chat(self, message: str, system_message: Optional[str] = None) -> str:
         try:
@@ -1564,9 +2245,9 @@ from openai import AsyncOpenAI
 import os
 
 class OpenAIService:
-    def __init__(self, api_key: Optional[str] = None):
+    def __init__(self, api_key: Optional[str] = None, model: str = "gpt-3.5-turbo"):
         self.client = AsyncOpenAI(api_key=api_key or os.getenv("OPENAI_API_KEY"))
-        self.model = "gpt-3.5-turbo"
+        self.model = model
 
     async def list_models(self) -> List[str]:
         """OpenAI modellerini listeler."""
@@ -1626,7 +2307,8 @@ class ChatApp {
     constructor() {
         this.apiUrl = 'http://localhost:8000';
         this.token = localStorage.getItem('token');
-        
+        this.currentConversationId = null;  // Mevcut sohbet oturumunun ID'sini tutar
+
         // DOM elementleri
         this.authContainer = document.getElementById('auth-container');
         this.mainContainer = document.getElementById('main-container');
@@ -1635,7 +2317,7 @@ class ChatApp {
         this.assistantSelect = document.getElementById('assistant-select');
         this.sendButton = document.getElementById('send-button');
         this.currentAssistantHeader = document.getElementById('current-assistant');
-        
+
         // Token kontrolü
         if (!this.token) {
             this.showAuthContainer();
@@ -1681,13 +2363,21 @@ class ChatApp {
         if (createAssistantBtn) {
             createAssistantBtn.addEventListener('click', () => this.createAssistant());
         }
+
+        // Yeni Sohbet butonu
+        const newChatButton = document.getElementById('new-chat-button');
+        if (newChatButton) {
+            newChatButton.addEventListener('click', () => this.startNewConversation());
+        }
+
+        this.initFileUpload();
     }
 
     initializeApp() {
         // Asistanları yükle
         this.loadAssistants();
-        
-        // Event listeners'ları ekle
+
+        // Event listeners
         if (this.assistantSelect) {
             this.assistantSelect.addEventListener('change', (e) => {
                 this.currentAssistant = e.target.value;
@@ -1696,7 +2386,7 @@ class ChatApp {
                 }
             });
         }
-        
+
         if (this.sendButton) {
             this.sendButton.addEventListener('click', () => this.sendMessage());
         }
@@ -1715,13 +2405,13 @@ class ChatApp {
                     'Authorization': `Bearer ${this.token}`
                 }
             });
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            
+
             const assistants = await response.json();
-            
+
             // Asistan listesini güncelle
             if (this.assistantSelect) {
                 this.assistantSelect.innerHTML = '<option value="">Choose an assistant...</option>';
@@ -1748,44 +2438,49 @@ class ChatApp {
 
     async sendMessage() {
         const message = this.messageInput.value.trim();
-        if (!message || !this.currentAssistant) return;
-
-        // Kullanıcı mesajını ekle
-        this.addMessage(message, true);
-        this.messageInput.value = '';
+        if (!message || !this.currentAssistant) {
+            this.showError('Lütfen bir asistan seçin ve mesaj girin');
+            return;
+        }
 
         try {
-            let url = `${this.apiUrl}/assistants/${encodeURIComponent(this.currentAssistant)}/chat/stream?message=${encodeURIComponent(message)}`;
+            // Mesajı göster
+            this.addMessage(message, true);
+            this.messageInput.value = '';
+
+            // URL oluştur
+            const url = new URL(`${this.apiUrl}/assistants/${encodeURIComponent(this.currentAssistant)}/chat/stream`);
+            url.searchParams.append('message', message);
             
-            // Eğer mevcut bir konuşma varsa, ID'sini ekle
             if (this.currentConversationId) {
-                url += `&conversation_id=${this.currentConversationId}`;
+                url.searchParams.append('conversation_id', this.currentConversationId);
             }
 
+            // Fetch isteği
             const response = await fetch(url, {
-                method: 'GET',
                 headers: {
-                    'Accept': 'text/event-stream',
-                    'Cache-Control': 'no-cache',
-                    'Authorization': `Bearer ${this.token}`  // Token eklendi
+                    'Authorization': `Bearer ${this.token}`,
+                    'Accept': 'text/event-stream'
                 }
             });
 
             if (!response.ok) {
-                if (response.status === 401) {
-                    // Token geçersizse login sayfasına yönlendir
-                    localStorage.removeItem('token');
-                    this.showAuthContainer();
-                    return;
-                }
-                throw new Error(`HTTP error! status: ${response.status}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${errorText}`);
+            }
+
+            // Conversation ID'yi header'dan al
+            const newConversationId = response.headers.get('X-Conversation-Id');
+            if (newConversationId && !this.currentConversationId) {
+                this.currentConversationId = newConversationId;
+                console.log('Yeni konuşma ID:', this.currentConversationId);
             }
 
             // Asistan yanıtı için yeni bir mesaj oluştur
-            let assistantMessage = document.createElement('div');
+            const assistantMessage = document.createElement('div');
             assistantMessage.className = 'message assistant';
             this.chatMessages.appendChild(assistantMessage);
-            
+
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
@@ -1817,20 +2512,14 @@ class ChatApp {
                 console.error('Stream error:', streamError);
                 throw streamError;
             } finally {
+                // Reader'ı sonlandır
                 reader.cancel();
-            }
-
-            // İlk mesaj gönderildiğinde conversation_id'yi al
-            if (!this.currentConversationId) {
-                const headerConversationId = response.headers.get('X-Conversation-Id');
-                if (headerConversationId) {
-                    this.currentConversationId = headerConversationId;
-                }
             }
 
         } catch (error) {
             console.error('Mesaj gönderme hatası:', error);
-            this.showError('Mesaj gönderilemedi: ' + error.message);
+            this.showError(`Hata: ${error.message}`);
+            this.addMessage('Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.', false);
         }
     }
 
@@ -1844,7 +2533,7 @@ class ChatApp {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         alertContainer.appendChild(alertDiv);
-        
+
         setTimeout(() => {
             alertDiv.remove();
         }, 5000);
@@ -1860,22 +2549,21 @@ class ChatApp {
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         `;
         alertContainer.appendChild(alertDiv);
-        
+
         setTimeout(() => {
             alertDiv.remove();
         }, 5000);
     }
 
-    // Auth metodları
+    // ===================== AUTH METHODS =====================
     async handleLogin(event) {
         event.preventDefault();
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-        
+
         try {
-            // OAuth2PasswordRequestForm formatında gönder
             const formData = new URLSearchParams();
-            formData.append('username', email);    // username = email
+            formData.append('username', email);
             formData.append('password', password);
 
             const response = await fetch(`${this.apiUrl}/auth/token`, {
@@ -1941,12 +2629,12 @@ class ChatApp {
     toggleAuthForms(show = 'login') {
         const loginForm = document.getElementById('login-form');
         const registerForm = document.getElementById('register-form');
-        
+
         if (!loginForm || !registerForm) {
             console.error('Auth forms not found in DOM');
             return;
         }
-        
+
         if (show === 'login') {
             loginForm.style.display = 'block';
             registerForm.style.display = 'none';
@@ -1959,7 +2647,7 @@ class ChatApp {
     showAuthContainer() {
         if (this.authContainer) {
             this.authContainer.style.display = 'block';
-            this.toggleAuthForms('login'); // Varsayılan olarak login formunu göster
+            this.toggleAuthForms('login');
         }
         if (this.mainContainer) {
             this.mainContainer.style.display = 'none';
@@ -1994,6 +2682,7 @@ class ChatApp {
             showLoginBtn.addEventListener('click', () => this.toggleAuthForms('login'));
         }
     }
+    // ========================================================
 
     async loadConversations() {
         try {
@@ -2009,14 +2698,14 @@ class ChatApp {
 
             const conversations = await response.json();
             const conversationList = document.getElementById('conversations-list');
-            
+
             if (conversationList) {
                 conversationList.innerHTML = ''; // Listeyi temizle
 
                 conversations.forEach(conv => {
                     const item = document.createElement('div');
                     item.classList.add('conversation-item', 'p-2', 'border-bottom', 'hover-bg-light');
-                    
+
                     // Tarih formatını düzenle
                     const date = new Date(conv.created_at);
                     const formattedDate = date.toLocaleString('tr-TR', {
@@ -2043,13 +2732,13 @@ class ChatApp {
                             </button>
                         </div>
                     `;
-                    
-                    // Load Chat butonuna tıklama olayı ekle
+
+                    // Load Chat butonuna tıklama
                     const loadChatBtn = item.querySelector('.load-chat');
                     if (loadChatBtn) {
                         loadChatBtn.addEventListener('click', () => this.loadChat(conv.id));
                     }
-                    
+
                     conversationList.appendChild(item);
                 });
             }
@@ -2072,21 +2761,24 @@ class ChatApp {
             }
 
             const messages = await response.json();
-            
-            // Mesajları chat alanına yükle
+
+            // Chat alanını temizle
             if (this.chatMessages) {
-                this.chatMessages.innerHTML = ''; // Chat alanını temizle
-                
-                messages.forEach(msg => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.className = `message ${msg.role === 'user' ? 'user' : 'assistant'}`;
-                    messageDiv.textContent = msg.content;
-                    this.chatMessages.appendChild(messageDiv);
-                });
-                
-                // Chat alanını en alta kaydır
-                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+                this.chatMessages.innerHTML = '';
+                // conversation_id'yi sakla
+                this.currentConversationId = conversationId;
             }
+
+            // Mesajları ekrana bas
+            messages.forEach(msg => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${msg.role === 'user' ? 'user' : 'assistant'}`;
+                messageDiv.textContent = msg.content;
+                this.chatMessages.appendChild(messageDiv);
+            });
+
+            this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+
         } catch (error) {
             console.error('Failed to load chat:', error);
             this.showError('Failed to load chat: ' + error.message);
@@ -2109,15 +2801,15 @@ class ChatApp {
             // Token'ı sil ve login sayfasına yönlendir
             localStorage.removeItem('token');
             this.token = null;
-            
-            // UI'ı güncelle
+
+            // UI güncelle
             this.authContainer.style.display = 'block';
             this.mainContainer.style.display = 'none';
-            
+
             // Login formunu sıfırla
             document.getElementById('login-email').value = '';
             document.getElementById('login-password').value = '';
-            
+
         } catch (error) {
             console.error('Logout error:', error);
             this.showError('Logout failed: ' + error.message);
@@ -2138,11 +2830,11 @@ class ChatApp {
 
             const models = await response.json();
             const modelSelect = document.getElementById('model-name');
-            
+
             if (modelSelect) {
                 modelSelect.innerHTML = '<option value="">Select a model...</option>';
-                
-                // Seçilen sağlayıcıya göre modelleri listele
+
+                // Seçilen sağlayıcıya göre modeller
                 if (models[provider]) {
                     models[provider].forEach(model => {
                         const option = document.createElement('option');
@@ -2164,14 +2856,12 @@ class ChatApp {
             const modelType = document.getElementById('model-type').value;
             const modelName = document.getElementById('model-name').value;
             const systemMessage = document.getElementById('system-message').value;
-            
-            // Form validasyonu
+
             if (!name || !modelType || !modelName || !systemMessage) {
                 this.showError('Please fill in all required fields');
                 return;
             }
 
-            // Model parametrelerini al
             const config = {
                 temperature: parseFloat(document.getElementById('temperature').value),
                 top_p: parseFloat(document.getElementById('top-p').value),
@@ -2200,21 +2890,137 @@ class ChatApp {
             }
 
             const result = await response.json();
-            
-            // Modal'ı kapat
+
+            // Modal'ı kapat (Bootstrap 5)
             const modal = bootstrap.Modal.getInstance(document.getElementById('createAssistantModal'));
-            modal.hide();
+            if (modal) modal.hide();
 
             // Asistan listesini yenile
             await this.loadAssistants();
-            
-            // Başarı mesajı göster
+
+            // Başarı mesajı
             this.showSuccess('Assistant created successfully!');
 
         } catch (error) {
             console.error('Failed to create assistant:', error);
             this.showError('Failed to create assistant: ' + error.message);
         }
+    }
+
+    // ===================== Yeni sohbet başlatma =====================
+    startNewConversation() {
+        this.currentConversationId = null;
+        this.clearChatMessages();
+
+        // Başlık güncelle
+        if (this.currentAssistant && this.currentAssistantHeader) {
+            this.currentAssistantHeader.textContent = `New Chat with ${this.currentAssistant}`;
+        }
+
+        // Mesaj input alanını temizle
+        if (this.messageInput) {
+            this.messageInput.value = '';
+        }
+
+        console.log('Started new conversation');
+    }
+
+    clearChatMessages() {
+        if (this.chatMessages) {
+            this.chatMessages.innerHTML = '';
+        }
+    }
+
+    initFileUpload() {
+        const dropZone = document.querySelector('.file-drop-zone');
+        if (!dropZone) return;
+
+        // Drag & Drop event handlers
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('drag-over');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('drag-over');
+        });
+
+        dropZone.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('drag-over');
+            const file = e.dataTransfer.files[0];
+            if (file) await this.handleFileUpload(file);
+        });
+
+        // Click to upload
+        dropZone.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf,.docx,.txt,.md';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) await this.handleFileUpload(file);
+            };
+            input.click();
+        });
+    }
+
+    async handleFileUpload(file) {
+        // Dosya tipi kontrolü
+        const validTypes = ['application/pdf', 
+                          'text/plain',
+                          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+        
+        if(!validTypes.includes(file.type)) {
+            this.showError('Desteklenmeyen dosya formatı');
+            return;
+        }
+        
+        // Dosya boyutu kontrolü (20MB)
+        if(file.size > 20 * 1024 * 1024) {
+            this.showError('Dosya boyutu 20MB sınırını aşıyor');
+            return;
+        }
+        
+        // Yükleme işlemi
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            const response = await fetch(`${this.apiUrl}/documents/upload`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                },
+                body: formData
+            });
+            
+            if(!response.ok) throw new Error(await response.text());
+            
+            // Başarılı yanıt
+            const result = await response.json();
+            this.updateFileList(result);
+            
+        } catch(error) {
+            console.error('Yükleme hatası:', error);
+            this.showError(`Sunucu hatası: ${error.message}`);
+        }
+    }
+
+    addFileToList(fileData) {
+        const fileList = document.querySelector('.file-list');
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item p-2 mb-2 border rounded';
+        fileItem.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-file-text me-2"></i>
+                    ${fileData.title} (${Math.round(fileData.file_size/1024)}KB)
+                </div>
+                <span class="badge bg-success">Yüklendi</span>
+            </div>
+        `;
+        fileList.prepend(fileItem);
     }
 }
 
@@ -2224,11 +3030,11 @@ window.ChatApp = ChatApp;
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\frontend\index.html ====
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Chat</title>
+    <title>Çevre ve Şehircilik Bakanlığı AI Asistanı</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -2246,39 +3052,39 @@ window.ChatApp = ChatApp;
     <div id="auth-container" class="container mt-5">
         <!-- Login Form -->
         <div id="login-form">
-            <h2>Login</h2>
+            <h2>Sisteme Giriş</h2>
             <form id="login-form-element">
                 <div class="mb-3">
-                    <label for="login-email" class="form-label">Email</label>
+                    <label for="login-email" class="form-label">E-posta</label>
                     <input type="email" class="form-control" id="login-email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="login-password" class="form-label">Password</label>
+                    <label for="login-password" class="form-label">Şifre</label>
                     <input type="password" class="form-control" id="login-password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-                <button type="button" class="btn btn-link" id="show-register">Need an account? Register</button>
+                <button type="submit" class="btn btn-primary">Giriş Yap</button>
+                <button type="button" class="btn btn-link" id="show-register">Hesabınız yok mu? Kayıt Olun</button>
             </form>
         </div>
 
         <!-- Register Form -->
         <div id="register-form" style="display: none;">
-            <h2>Register</h2>
+            <h2>Yeni Kayıt</h2>
             <form id="register-form-element">
                 <div class="mb-3">
-                    <label for="register-email" class="form-label">Email</label>
+                    <label for="register-email" class="form-label">E-posta</label>
                     <input type="email" class="form-control" id="register-email" required>
                 </div>
                 <div class="mb-3">
-                    <label for="register-username" class="form-label">Username</label>
+                    <label for="register-username" class="form-label">Kullanıcı Adı</label>
                     <input type="text" class="form-control" id="register-username" required>
                 </div>
                 <div class="mb-3">
-                    <label for="register-password" class="form-label">Password</label>
+                    <label for="register-password" class="form-label">Şifre</label>
                     <input type="password" class="form-control" id="register-password" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Register</button>
-                <button type="button" class="btn btn-link" id="show-login">Already have an account? Login</button>
+                <button type="submit" class="btn btn-primary">Kayıt Ol</button>
+                <button type="button" class="btn btn-link" id="show-login">Zaten hesabınız var mı? Giriş Yapın</button>
             </form>
         </div>
     </div>
@@ -2289,7 +3095,7 @@ window.ChatApp = ChatApp;
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
             <div class="container-fluid">
                 <a class="navbar-brand" href="#">
-                    <i class="bi bi-robot"></i>  Chat
+                    <i class="bi bi-robot"></i> Çevre Bakanlığı Asistanı
                 </a>
                 <div class="ms-auto d-flex align-items-center">
                     <div class="dropdown">
@@ -2297,16 +3103,20 @@ window.ChatApp = ChatApp;
                             <i class="bi bi-gear-fill"></i>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> Help</a></li>
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-book"></i> Documentation</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-question-circle"></i> Yardım</a></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-book"></i> Dokümantasyon</a></li>
                             <li><hr class="dropdown-divider"></li>
                                     <div class="d-flex">
             <button id="logout-button" class="btn btn-outline-danger">
-                <i class="bi bi-box-arrow-right"></i> Logout
+                <i class="bi bi-box-arrow-right"></i> Çıkış Yap
             </button>
         </div>
                         </ul>
                     </div>
+                    <button id="new-chat-button" class="btn btn-outline-primary ms-2">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Yeni Sohbet
+                    </button>
                 </div>
             </div>
         </nav>
@@ -2317,19 +3127,19 @@ window.ChatApp = ChatApp;
             <div class="sidebar bg-light border-end">
                 <div class="p-3">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0">Assistants</h6>
+                        <h6 class="mb-0">Uzman Asistanlar</h6>
                         <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createAssistantModal">
-                            <i class="bi bi-plus"></i> New
+                            <i class="bi bi-plus"></i> Yeni
                         </button>
                     </div>
                     <select id="assistant-select" class="form-select mb-4">
-                        <option value="">Choose an assistant...</option>
+                        <option value="">Bir asistan seçin...</option>
                     </select>
 
                     <!-- Conversations List -->
                     <div class="mt-4">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h6 class="mb-0">Conversations</h6>
+                            <h6 class="mb-0">Geçmiş Sohbetler</h6>
                             <button id="load-conversations" class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-arrow-clockwise"></i>
                             </button>
@@ -2341,13 +3151,13 @@ window.ChatApp = ChatApp;
 
                     <!-- File Manager Section -->
                     <div class="mt-4">
-                        <h6 class="mb-3">Documents</h6>
+                        <h6 class="mb-3">Belge Yönetimi</h6>
                         <div class="file-drop-zone p-3 border rounded text-center mb-3">
                             <i class="bi bi-cloud-upload display-6"></i>
-                            <p class="small mb-0">Drag & drop files here<br>or click to upload</p>
+                            <p class="small mb-0">Dosyaları buraya sürükleyin<br>veya yüklemek için tıklayın</p>
                         </div>
                         <div class="file-list small">
-                            <!-- Files will be listed here -->
+                            <!-- Dosyalar burada listelenecek -->
                         </div>
                     </div>
                 </div>
@@ -2358,18 +3168,18 @@ window.ChatApp = ChatApp;
                 <div class="chat-container d-flex flex-column">
                     <!-- Chat Header -->
                     <div class="chat-header border-bottom p-3">
-                        <h5 class="mb-0" id="current-assistant">Select an assistant to start chatting</h5>
+                        <h5 class="mb-0" id="current-assistant">Sohbet başlatmak için bir asistan seçin</h5>
                     </div>
 
                     <!-- Messages Area -->
                     <div class="messages-area flex-grow-1 p-3" id="chat-messages">
-                        <!-- Messages will appear here -->
+                        <!-- Mesajlar burada görünecek -->
                     </div>
 
                     <!-- Input Area -->
                     <div class="chat-input-area border-top p-3">
                         <div class="input-group">
-                            <input type="text" id="message-input" class="form-control" placeholder="Type your message...">
+                            <input type="text" id="message-input" class="form-control" placeholder="Mesajınızı yazın...">
                             <button id="send-button" class="btn btn-primary">
                                 <i class="bi bi-send"></i>
                             </button>
@@ -2384,22 +3194,22 @@ window.ChatApp = ChatApp;
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Create New Assistant</h5>
+                        <h5 class="modal-title">Yeni Asistan Oluştur</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
                         <form id="create-assistant-form">
                             <!-- Assistant Name -->
                             <div class="mb-3">
-                                <label for="assistant-name" class="form-label">Assistant Name</label>
+                                <label for="assistant-name" class="form-label">Asistan Adı</label>
                                 <input type="text" class="form-control" id="assistant-name" required>
                             </div>
 
                             <!-- Model Type -->
                             <div class="mb-3">
-                                <label for="model-type" class="form-label">Provider</label>
+                                <label for="model-type" class="form-label">Sağlayıcı</label>
                                 <select class="form-select" id="model-type" required>
-                                    <option value="">Select provider...</option>
+                                    <option value="">Sağlayıcı seçin...</option>
                                     <option value="openai">OpenAI</option>
                                     <option value="ollama">Ollama</option>
                                 </select>
@@ -2409,81 +3219,81 @@ window.ChatApp = ChatApp;
                             <div class="mb-3">
                                 <label for="model-name" class="form-label">Model</label>
                                 <select class="form-select" id="model-name" required>
-                                    <option value="">Select a model...</option>
+                                    <option value="">Bir model seçin...</option>
                                 </select>
                             </div>
 
                             <!-- System Message -->
                             <div class="mb-3">
-                                <label for="system-message" class="form-label">System Message</label>
+                                <label for="system-message" class="form-label">Sistem Mesajı</label>
                                 <textarea class="form-control" id="system-message" rows="4" required></textarea>
-                                <div class="form-text">Define the assistant's behavior and role.</div>
+                                <div class="form-text">Asistanın davranışını ve rolünü tanımlayın</div>
                             </div>
 
                             <!-- Model Parameters -->
                             <div class="border rounded p-3 mb-3">
-                                <h6 class="mb-3">Model Parameters</h6>
+                                <h6 class="mb-3">Model Parametreleri</h6>
                                 
                                 <!-- Temperature -->
                                 <div class="mb-3">
                                     <label for="temperature" class="form-label d-flex justify-content-between">
-                                        <span>Temperature</span>
+                                        <span>Rastgelelik</span>
                                         <span class="text-muted" id="temperature-value">0.7</span>
                                     </label>
                                     <input type="range" class="form-range" id="temperature" 
                                            min="0" max="1" step="0.1" value="0.7">
-                                    <div class="form-text">Controls randomness: Lower values make responses more focused, higher values make them more creative.</div>
+                                    <div class="form-text">Rastgelelik: Düşük değerler cevapları daha odaklı, yüksek değerler daha yaratıcı yapar.</div>
                                 </div>
 
                                 <!-- Top P -->
                                 <div class="mb-3">
                                     <label for="top-p" class="form-label d-flex justify-content-between">
-                                        <span>Top P (Nucleus Sampling)</span>
+                                        <span>Top P (Nükleus Örnekleme)</span>
                                         <span class="text-muted" id="top-p-value">0.9</span>
                                     </label>
                                     <input type="range" class="form-range" id="top-p" 
                                            min="0" max="1" step="0.1" value="0.9">
-                                    <div class="form-text">Limits cumulative probability of tokens considered. Lower values make output more focused.</div>
+                                    <div class="form-text">Dikkate alınan token'ların kümülatif olasılığını sınırlar. Düşük değerler çıktıyı daha odaklı yapar.</div>
                                 </div>
 
                                 <!-- Max Tokens -->
                                 <div class="mb-3">
                                     <label for="max-tokens" class="form-label d-flex justify-content-between">
-                                        <span>Max Tokens</span>
+                                        <span>Maksimum Token</span>
                                         <span class="text-muted" id="max-tokens-value">2000</span>
                                     </label>
                                     <input type="range" class="form-range" id="max-tokens" 
                                            min="100" max="4000" step="100" value="2000">
-                                    <div class="form-text">Maximum length of the response.</div>
+                                    <div class="form-text">Maksimum yanıt uzunluğu</div>
                                 </div>
 
                                 <!-- Frequency Penalty -->
                                 <div class="mb-3">
                                     <label for="frequency-penalty" class="form-label d-flex justify-content-between">
-                                        <span>Frequency Penalty</span>
+                                        <span>Tekrar Cezası</span>
                                         <span class="text-muted" id="frequency-penalty-value">0.0</span>
                                     </label>
                                     <input type="range" class="form-range" id="frequency-penalty" 
                                            min="-2" max="2" step="0.1" value="0">
-                                    <div class="form-text">Reduces repetition of tokens. Higher values decrease repetition.</div>
+                                    <div class="form-text">Tekrarları azaltır. Yüksek değerler tekrarı azaltır.</div>
                                 </div>
 
                                 <!-- Presence Penalty -->
                                 <div class="mb-3">
                                     <label for="presence-penalty" class="form-label d-flex justify-content-between">
-                                        <span>Presence Penalty</span>
+                                        <span>Çeşitlilik Teşviki</span>
                                         <span class="text-muted" id="presence-penalty-value">0.0</span>
                                     </label>
                                     <input type="range" class="form-range" id="presence-penalty" 
                                            min="-2" max="2" step="0.1" value="0">
-                                    <div class="form-text">Encourages discussing new topics. Higher values increase topic diversity.</div>
+                                    <div class="form-text">Yeni konuları tartışmayı teşvik eder. Yüksek değerler konu çeşitliliğini artırır.</div>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" id="create-assistant-btn">Create Assistant</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                        <button type="button" class="btn btn-primary" id="create-assistant-btn">Asistan Oluştur</button>
                     </div>
                 </div>
             </div>
@@ -2614,17 +3424,24 @@ body {
 
 /* File Drop Zone */
 .file-drop-zone {
+    background-color: #f8f9fa;
     border: 2px dashed #dee2e6;
-    border-radius: 0.5rem;
-    padding: 2rem 1rem;
     transition: all 0.3s ease;
-    background: #fff;
+    cursor: pointer;
 }
 
-.file-drop-zone:hover {
-    border-color: var(--primary-color);
-    background-color: rgba(13, 110, 253, 0.05);
-    cursor: pointer;
+.file-drop-zone.drag-over {
+    border-color: #0d6efd;
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+.file-item {
+    background-color: white;
+    transition: transform 0.2s;
+}
+
+.file-item:hover {
+    transform: translateX(5px);
 }
 
 /* Scrollbar */
@@ -2821,27 +3638,12 @@ from core.models.assistant import Assistant as AssistantClass
 from api.dependencies import get_current_user
 import uuid
 from datetime import datetime
-import os
-import json
-from .auth import get_current_user  # Auth router'dan import ediyoruz
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, and_
-from core.database import get_db
-from core.database.models import Assistant, Conversation, Message, User
-from datetime import datetime
-import uuid
-from typing import Optional
 from sse_starlette.sse import EventSourceResponse
-import json
 import asyncio
-import openai
-from dotenv import load_dotenv
-from openai import OpenAI
-import httpx
+import json
+from sqlalchemy.exc import IntegrityError
 
-load_dotenv()
-
-# Global assistants dictionary
+# Global (in-memory) Assistants Dictionary
 assistants: Dict[str, AssistantClass] = {}
 
 router = APIRouter(
@@ -2849,21 +3651,23 @@ router = APIRouter(
     tags=["assistants"]
 )
 
+
 @router.get("/list", response_model=List[AssistantResponse])
 async def list_assistants(
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)  # Kullanıcıyı al
+    current_user: User = Depends(get_current_user)
 ):
+    """Veritabanındaki tüm asistanları listeler."""
     try:
         print(f"Fetching assistants for user: {current_user.id}")
         query = select(AssistantModel)
         result = await db.execute(query)
         db_assistants = result.scalars().all()
-        
         return [AssistantResponse.from_orm(assistant) for assistant in db_assistants]
     except Exception as e:
         print(f"Error in list_assistants: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/{assistant_name}/chat/stream")
 async def chat_stream(
@@ -2873,44 +3677,46 @@ async def chat_stream(
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
+    """
+    Streaming endpoint (SSE) ile asistan sohbeti.
+    conversation_id verilirse o konuşmaya devam eder,
+    verilmezse yeni bir Conversation kaydı oluşturur.
+    """
     try:
-        # Asistanı bul
-        query = select(Assistant).where(Assistant.name == assistant_name)
+        # 1. Asistanı DB'den bul
+        query = select(AssistantModel).where(AssistantModel.name == assistant_name)
         result = await db.execute(query)
-        assistant = result.scalar_one_or_none()
-        
-        if not assistant:
+        db_assistant = result.scalar_one_or_none()
+        if not db_assistant:
             raise HTTPException(status_code=404, detail="Assistant not found")
 
-        # Mevcut konuşmayı bul veya yeni oluştur
+        # 2. Mevcut conversation varsa bul
         if conversation_id:
-            query = select(Conversation).where(
+            conv_query = select(Conversation).where(
                 and_(
                     Conversation.id == conversation_id,
-                    Conversation.user_id == current_user.id  # Kullanıcı kontrolü ekle
+                    Conversation.user_id == current_user.id
                 )
             )
-            result = await db.execute(query)
-            conversation = result.scalar_one_or_none()
-            
+            conv_result = await db.execute(conv_query)
+            conversation = conv_result.scalar_one_or_none()
             if not conversation:
                 raise HTTPException(status_code=404, detail="Conversation not found")
         else:
-            # Yeni konuşma oluştur
-            conversation_name = f"Chat with {assistant_name}"
+            # conversation_id yok => yeni bir conversation başlat
             conversation = Conversation(
                 id=str(uuid.uuid4()),
-                name=conversation_name,
-                assistant_id=assistant.id,
+                name=f"Chat with {assistant_name}",
+                assistant_id=db_assistant.id,
                 session_id=str(uuid.uuid4()),
-                user_id=current_user.id,  # Test user yerine gerçek kullanıcı
+                user_id=current_user.id,
                 created_at=datetime.utcnow()
             )
             db.add(conversation)
             await db.commit()
             await db.refresh(conversation)
 
-        # Kullanıcı mesajını kaydet
+        # 3. Kullanıcı mesajını DB'ye kaydet
         user_message = Message(
             id=str(uuid.uuid4()),
             conversation_id=conversation.id,
@@ -2921,38 +3727,39 @@ async def chat_stream(
         db.add(user_message)
         await db.commit()
 
-        # Memory'de asistan var mı kontrol et ve oluştur
+        # 4. Bellekte asistan var mı? Yoksa oluştur.
         if assistant_name not in assistants:
-            config = assistant.config if isinstance(assistant.config, dict) else {}
-            
-            try:
-                if assistant.model_type == "openai":
-                    model = OpenAIService()
-                elif assistant.model_type == "ollama":
-                    model = OllamaService()
-                else:
-                    raise HTTPException(status_code=400, detail="Invalid model type")
-                
-                assistant = AssistantClass(
-                    name=assistant.name,
-                    model=model,
-                    system_message=assistant.system_message,
-                    config=config
-                )
-                assistants[assistant_name] = assistant
-            except Exception as e:
-                print(f"Model initialization error: {str(e)}")
-                raise HTTPException(status_code=500, detail=f"Failed to initialize model: {str(e)}")
+            config = db_assistant.config if isinstance(db_assistant.config, dict) else {}
+            if db_assistant.model_type == "openai":
+                model = OpenAIService(model=db_assistant.model_name)
+            elif db_assistant.model_type == "ollama":
+                model = OllamaService(model=db_assistant.model_name)
+            else:
+                raise HTTPException(status_code=400, detail="Invalid model type")
 
+            new_assistant = AssistantClass(
+                name=db_assistant.name,
+                model=model,
+                system_message=db_assistant.system_message,
+                config=config
+            )
+            assistants[assistant_name] = new_assistant
+
+        # 5. Yanıtı stream şeklinde döndüren generator
         async def generate() -> AsyncGenerator[str, None]:
             full_response = ""
             try:
-                async for chunk in assistants[assistant_name].process_message(message, stream=True):
+                # Asistan objesini memory'den al
+                current_assistant = assistants[assistant_name]
+
+                # Asistan yanıtını parça parça al
+                async for chunk in current_assistant.process_message(message, stream=True):
                     if chunk:
                         full_response += chunk
                         yield f"data: {chunk}\n\n"
-                
-                if full_response:  # Sadece yanıt varsa kaydet
+
+                # Yanıt tamamlanınca asistan mesajını kaydet
+                if full_response:
                     assistant_message = Message(
                         id=str(uuid.uuid4()),
                         conversation_id=conversation.id,
@@ -2962,12 +3769,14 @@ async def chat_stream(
                     )
                     db.add(assistant_message)
                     await db.commit()
-                
+
                 yield "data: [DONE]\n\n"
+
             except Exception as e:
                 error_msg = f"Stream generation error: {str(e)}"
                 print(error_msg)
-                # Hata mesajını kaydet
+
+                # Hata mesajını DB'ye de kaydedebiliriz
                 error_message = Message(
                     id=str(uuid.uuid4()),
                     conversation_id=conversation.id,
@@ -2977,16 +3786,16 @@ async def chat_stream(
                 )
                 db.add(error_message)
                 await db.commit()
+
                 yield f"data: error: {str(e)}\n\n"
 
+        # 6. SSE response
         return StreamingResponse(
             generate(),
             media_type="text/event-stream",
             headers={
-                "Cache-Control": "no-cache",
-                "Connection": "keep-alive",
-                "Content-Type": "text/event-stream",
-                "X-Conversation-Id": str(conversation.id)
+                "X-Conversation-Id": str(conversation.id),
+                "Cache-Control": "no-cache"
             }
         )
 
@@ -2995,6 +3804,7 @@ async def chat_stream(
         await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/create", response_model=AssistantResponse)
 async def create_assistant(
     assistant: AssistantCreate,
@@ -3002,132 +3812,148 @@ async def create_assistant(
     current_user: User = Depends(get_current_user)
 ):
     try:
-        # İsim kontrolü yap
-        query = select(AssistantModel).where(AssistantModel.name == assistant.name)
-        result = await db.execute(query)
-        existing_assistant = result.scalar_one_or_none()
+        # Model servisini oluştur
+        if assistant.model_type == "openai":
+            model_service = OpenAIService(model=assistant.model_name)
+        elif assistant.model_type == "ollama":
+            model_service = OllamaService(model=assistant.model_name)
+        else:
+            raise HTTPException(status_code=400, detail="Invalid model type")
         
-        if existing_assistant:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Assistant with name '{assistant.name}' already exists"
-            )
-        
-        # Yeni asistan oluştur
+        # Veritabanına kaydet
         db_assistant = AssistantModel(
             id=str(uuid.uuid4()),
             name=assistant.name,
             model_type=assistant.model_type,
+            model_name=assistant.model_name,
             system_message=assistant.system_message,
             config=assistant.config,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
             creator_id=current_user.id
         )
-        
         db.add(db_assistant)
         await db.commit()
         await db.refresh(db_assistant)
         
+        # Asistanı memory'ye ekle
+        new_assistant = AssistantClass(
+            name=assistant.name,
+            model=model_service,
+            system_message=assistant.system_message,
+            config=assistant.config
+        )
+        assistants[assistant.name] = new_assistant
+        
         return db_assistant
         
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        print(f"Error creating assistant: {str(e)}")
+    except IntegrityError as e:
         await db.rollback()
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=409,
+            detail="Assistant name already exists"
+        )
+    except Exception as e:
+        await db.rollback()
+        print(f"Error creating assistant: {str(e)}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to create assistant: {str(e)}"
+        )
+
 
 @router.get("/conversations", response_model=List[ConversationResponse])
 async def get_conversations(
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),  # Kullanıcıyı al
+    current_user: User = Depends(get_current_user),
     skip: int = 0,
     limit: int = 10
 ):
+    """Mevcut kullanıcının konuşmalarını listeler."""
     try:
         print(f"Fetching conversations for user: {current_user.id}")
         query = (
             select(Conversation)
-            .where(Conversation.user_id == current_user.id)  # Kullanıcı ID'sini kullan
+            .where(Conversation.user_id == current_user.id)
             .order_by(Conversation.created_at.desc())
             .offset(skip)
             .limit(limit)
         )
-        
         result = await db.execute(query)
         conversations = result.scalars().all()
-        
+
         response_list = []
         for conv in conversations:
+            # Konuşmaya ait mesajları al
             messages_query = select(Message).where(Message.conversation_id == conv.id)
             messages_result = await db.execute(messages_query)
             messages = messages_result.scalars().all()
-            
+
+            # Asistanı bul
             assistant_query = select(AssistantModel).where(AssistantModel.id == conv.assistant_id)
             assistant_result = await db.execute(assistant_query)
-            assistant = assistant_result.scalar_one_or_none()
-            
+            db_assistant = assistant_result.scalar_one_or_none()
+
             response_list.append(
                 ConversationResponse(
                     id=conv.id,
                     name=conv.name,
                     assistant_id=conv.assistant_id,
-                    assistant_name=assistant.name if assistant else "Unknown",
+                    assistant_name=db_assistant.name if db_assistant else "Unknown",
                     session_id=conv.session_id,
                     user_id=conv.user_id,
                     created_at=conv.created_at,
                     messages=[MessageResponse.from_orm(msg) for msg in messages]
                 )
             )
-        
+
         return response_list
+
     except Exception as e:
         print(f"Error fetching conversations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/conversations/{conversation_id}/messages", response_model=List[MessageResponse])
 async def get_conversation_messages(
     conversation_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    """Belirli bir konuşmadaki tüm mesajları döndürür."""
     try:
         query = select(Message).where(
             Message.conversation_id == conversation_id
         ).order_by(Message.created_at.asc())
-        
+
         result = await db.execute(query)
         messages = result.scalars().all()
-        
         return messages
-        
+
     except Exception as e:
         print(f"Error getting messages: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.delete("/conversations/{conversation_id}")
 async def delete_conversation(
     conversation_id: str,
     db: AsyncSession = Depends(get_db)
 ):
+    """Belirli bir konuşmayı siler (mesajlarıyla birlikte)."""
     try:
         # Önce mesajları sil
         await db.execute(
             delete(Message).where(Message.conversation_id == conversation_id)
         )
-        
         # Sonra konuşmayı sil
         result = await db.execute(
             delete(Conversation).where(Conversation.id == conversation_id)
         )
-        
         await db.commit()
-        
+
         if result.rowcount == 0:
             raise HTTPException(status_code=404, detail="Conversation not found")
-        
+
         return {"message": "Conversation deleted successfully"}
-        
+
     except HTTPException as he:
         raise he
     except Exception as e:
@@ -3135,14 +3961,14 @@ async def delete_conversation(
         await db.rollback()
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/models", response_model=Dict[str, List[str]])
 async def list_models(current_user: User = Depends(get_current_user)):
+    """OpenAI ve Ollama modellerini listeler."""
     try:
-        # Servisleri başlat
         openai_service = OpenAIService()
         ollama_service = OllamaService()
 
-        # Modelleri al
         openai_models = await openai_service.list_models()
         ollama_models = await ollama_service.list_models()
 
@@ -3150,13 +3976,14 @@ async def list_models(current_user: User = Depends(get_current_user)):
             "openai": openai_models,
             "ollama": ollama_models
         }
-        
+
     except Exception as e:
         print(f"Error in list_models: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail=f"Failed to fetch models: {str(e)}"
-        ) 
+        )
+
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\routers\auth.py ====
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -3298,6 +4125,74 @@ async def get_current_user(
     
     return user 
 
+==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\routers\documents.py ====
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
+from typing import List
+import uuid
+
+from core.database import get_db, AsyncSessionLocal
+from core.database.models import RAGDocument
+from core.schemas.enums import FileType
+from core.services.file_upload import FileUploadService
+from core.services.document_processing import DocumentProcessor
+from api.dependencies import get_current_user
+from api.schemas import RAGDocumentResponse
+from core.database.crud import create_rag_document
+
+router = APIRouter(
+    prefix="/documents",
+    tags=["documents"]
+)
+
+@router.post("/upload", response_model=RAGDocumentResponse)
+async def upload_document(
+    file: UploadFile = File(...),
+    current_user = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db)
+):
+    try:
+        # 1. Dosya validasyonu
+        if not file.filename.lower().endswith(('.pdf', '.docx', '.txt', '.md')):
+            raise HTTPException(400, "Desteklenmeyen dosya formatı")
+        print(file.filename)
+        # 2. Dosyayı geçici klasöre kaydet
+        upload_service = FileUploadService()
+        upload_data = await upload_service.save_temp_file(file, current_user)
+        print("upload_data::", upload_data)
+        processor = DocumentProcessor()
+        print("upload_data['temp_path']::", upload_data["temp_path"])
+        doc_record = await processor.process_document(upload_data["temp_path"],upload_data["content"], current_user.id)
+        print(doc_record)
+
+        document_data = {
+            "title": upload_data["original_name"],
+            "content": upload_data["content"],
+            "file_path": upload_data["temp_path"],
+            "file_type": upload_data["file_type"],
+            "user_id": current_user.id
+        }
+        
+        new_doc = await create_rag_document(db, document_data)
+        return new_doc
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(500, f"Dosya işleme hatası: {str(e)}")
+
+@router.get("/", response_model=List[RAGDocumentResponse])
+async def list_user_documents(
+    db: AsyncSession = Depends(get_db),
+    current_user = Depends(get_current_user),
+):
+    try:
+        processor = DocumentProcessor(db)
+        docs = await processor.get_user_documents(current_user.id)
+        return docs
+    except Exception as e:
+        raise HTTPException(500, f"Dökümanlar getirilemedi: {str(e)}") 
+
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\routers\rag.py ====
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
@@ -3342,7 +4237,14 @@ async def toggle_rag_system(
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\routers\__init__.py ====
 from .assistants import router as assistants_router
-from .rag import router as rag_router 
+from .rag import router as rag_router
+from .documents import router as documents_router
+
+__all__ = [
+    "assistants_router",
+    "rag_router",
+    "documents_router", 
+] 
 
 ==== File: C:\Users\Tuga-Munir\source\repos\chatbot_framework\scripts\check_tables.py ====
 import asyncio

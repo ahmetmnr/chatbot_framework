@@ -1,8 +1,10 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, DateTime, JSON, LargeBinary
+from sqlalchemy.orm import relationship, deferred
 from datetime import datetime
 from .db_connection import Base
 import uuid
+from sqlalchemy.types import Enum
+from core.schemas.enums import ProcessingStatus, FileType
 
 class User(Base):
     __tablename__ = "users"
@@ -65,16 +67,31 @@ class Message(Base):
 
 class RAGDocument(Base):
     __tablename__ = "rag_documents"
-
-    id = Column(String, primary_key=True, index=True)
-    title = Column(String, nullable=False)
-    content = Column(Text, nullable=False)
+    
+    id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    title = Column(String(255))
+    content = Column(Text)
+    file_path = Column(String(500))
+    file_checksum = Column(String(64))
+    file_size = Column(Integer)
+    chunk_size = Column(Integer)
+    processing_status = Column(
+        Enum(ProcessingStatus, name="processing_status_enum"),
+        default=ProcessingStatus.pending
+    )
+    embeddings = Column(LargeBinary)
     meta_data = Column(JSON)
     user_id = Column(String, ForeignKey("users.id"))
     created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
-
-    # Relationships
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    file_type = Column(
+        Enum(FileType, name="file_type_enum"),
+        default=FileType.unknown
+    )
+    embedding_model = Column(String)
+    chunking_method = Column(String)
+    processing_errors = Column(Text)
+    
     user = relationship("User", back_populates="rag_documents")
     collections = relationship(
         "RAGCollection",

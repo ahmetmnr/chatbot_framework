@@ -3,16 +3,16 @@ import os
 # === SETTINGS (Customize as needed) / AYARLAR (İsteğinize göre düzenleyin) ===
 
 # Directory to scan / Tarayacağınız dizin
-DIRECTORY_TO_SCAN = r"C:\Users\Tuga-Munir\source\repos\chatbot_framework"
+DIRECTORY_TO_SCAN = r"C:\Users\Tuga-Munir\Downloads\tr.org.aeo.gk"
 
 # Folders to exclude / Hariç tutmak istediğiniz klasörler
-IGNORED_DIRS = ["venv", ".git", "__pycache__"]
+IGNORED_DIRS = ["venv", ".git", "__pycache__",".venv","Scripts","Styles"]
 
 # Files to exclude / Hariç tutmak istediğiniz dosyalar
 IGNORED_FILES = ["get-pip.py", ".gitignore"]
 
 # Only files with these extensions will be read / Sadece bu uzantılara sahip dosyalar okunacak
-FILE_EXTENSIONS = ["py", "html", "css", "js"]
+FILE_EXTENSIONS = ["cs", "cshtml","config"]
 
 # Full file path for saving the output / Çıktının kaydedileceği tam dosya yolu
 OUTPUT_FILE = os.path.join(DIRECTORY_TO_SCAN, "merged_content_with_headers.txt")
